@@ -1,0 +1,40 @@
+# 빌드 결과물
+dist/
+build/
+storybook-static/
+.rollup.cache/
+
+# 의존성
+node_modules/
+
+# 패키지 매니저
+pnpm-lock.yaml
+.pnpm/
+
+# 환경 설정
+vite.config.ts
+postcss.config.js
+tailwind.config.ts
+rollup.config.mjs
+.eslintrc.cjs
+prettier.config.js
+
+# 타입 정의
+*.d.ts
+vite-env.d.ts
+
+# 캐시
+.vite/
+.rollup.cache/
+.eslintcache
+
+# 테스트 커버리지
+coverage/
+
+# 스토리북
+storybook-static/
+.storybook/
+
+# 빌드 설정
+tsconfig.json
+tsconfig.*.json

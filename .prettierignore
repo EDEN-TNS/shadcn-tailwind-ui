@@ -1,0 +1,38 @@
+# 빌드 결과물
+dist/
+build/
+storybook-static/
+
+# Node.js 모듈
+node_modules/
+
+# 패키지 매니저 파일
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# 환경 설정 파일
+.env*
+.prettierrc
+.eslintrc.cjs
+
+# 로그 파일
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 프로젝트 루트에서 제외된 다른 파일들
+public/
+coverage/
+
+# 기타
+.vscode/
+.idea/
+.DS_Store
+
+# 설정 파일들
+*.config.js
+*.config.ts
+tsconfig.json
