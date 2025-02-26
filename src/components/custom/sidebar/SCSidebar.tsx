@@ -1,6 +1,3 @@
-import React from 'react';
-import { ChevronRight } from 'lucide-react';
-import { Avatar } from '@/components/ui/avatar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
     Sidebar,
@@ -19,13 +16,11 @@ import {
     SidebarRail,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { cn } from '@/lib/utils';
 
-// 상수 정의
-const SC_SIDEBAR_SECTIONS = {
-    Platform: 'Platform',
-    Projects: 'Projects',
-} as const;
+import { Avatar } from '@/components/ui/avatar';
+import { ChevronRight } from 'lucide-react';
+import React from 'react';
+import { cn } from '@/lib/utils';
 
 const SC_SIDEBAR_SIZES = {
     default: 'w-64',

@@ -78,23 +78,16 @@ module.exports = {
         ],
 
         /** Import Rules */
-        'import/order': [
-            'error',
-            {
-                groups: ['builtin', 'external', 'type', 'internal', ['parent', 'sibling', 'index'], 'unknown'],
-                pathGroups: [
-                    { pattern: 'react', group: 'external', position: 'before' },
-                    { pattern: '@/**', group: 'internal' },
-                ],
-                pathGroupsExcludedImportTypes: ['react', 'type'],
-                'newlines-between': 'never',
+        'import/newline-after-import': 'off',
+            'import/order': ['error', {
+                groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+                newlinesBetween: 'never',
                 alphabetize: {
                     order: 'asc',
                     caseInsensitive: true,
                 },
             },
         ],
-
         'import/extensions': [
             'error',
             'ignorePackages',

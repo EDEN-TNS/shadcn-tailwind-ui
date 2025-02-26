@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+
+import React from 'react';
 import { SCInput } from '@/components/custom/input/SCInput';
 import { SCLabel } from '@/components/custom/label/SCLabel';
 

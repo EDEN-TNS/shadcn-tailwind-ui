@@ -1,5 +1,6 @@
-import { Mail } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
+
+import { Mail } from 'lucide-react';
 import { SCButton } from '@/components/custom/button/SCButton';
 
 const meta: Meta<typeof SCButton> = {
