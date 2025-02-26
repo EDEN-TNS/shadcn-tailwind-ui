@@ -9,7 +9,7 @@
     "files": [
         "dist"
     ],
-    "homepage": "https://67bea72b1948f97031644095-ytkvfpytxl.chromatic.com/",
+    "homepage": "https://67beae8d6c317a64d5e86707-mmrtmdvnes.chromatic.com/",
     "publishConfig": {
         "access": "public"
     },
@@ -21,7 +21,7 @@
         "build": "rollup -c",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
-        "chromatic": "npx chromatic --project-token=chpt_81269f8eb10dfad"
+        "chromatic": "npx chromatic --project-token=chpt_111db65d905d089"
     },
     "peerDependencies": {
         "react": "^18.0.0",
