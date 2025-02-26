@@ -1,6 +1,5 @@
 {
     "name": "@edentns/shadcn-tailwind-ui",
-    "private": true,
     "version": "0.0.0-beta-20250226",
     "type": "module",
     "main": "dist/cjs/index.js",
