@@ -6,7 +6,7 @@
 
 <br />
 
-<p align="left" style="display: flex; gap: 4px; justify-content: center; margin-bottom: 20px;">
+<p align="center" style="display: flex; gap: 4px; justify-content: center; margin-bottom: 20px;">
   <a href="https://www.npmjs.com/package/@edentns/shadcn-tailwind-ui">
         <img src="https://badgen.net/npm/v/@edentns/shadcn-tailwind-ui" alt="Latest release" />
     </a>
