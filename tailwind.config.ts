@@ -20,7 +20,11 @@ export default {
     darkMode: ['class'],
     // Tailwind를 적용할 경로를 설정합니다.
     // src/**/*.{js,ts,jsx,tsx} 내의 모든 파일에서 Tailwind 클래스를 찾아서 적용합니다.
-    content: ['./src/**/*.{ts,tsx}', './src/stories/**/*.{ts,tsx}', './.storybook/**/*.{js,jsx,ts,tsx}'],
+    content: [
+        './src/**/*.{js,ts,jsx,tsx,mdx}',
+        './src/stories/**/*.{js,ts,jsx,tsx,mdx}',
+        './.storybook/**/*.{js,ts,jsx,tsx,mdx}',
+    ],
     theme: {
     	extend: {
     		fontFamily: {
@@ -117,5 +121,5 @@ export default {
     		}
     	}
     },
-    plugins: [require('tailwindcss-animate')],
+    plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
 };

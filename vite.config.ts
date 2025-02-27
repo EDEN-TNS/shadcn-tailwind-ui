@@ -9,20 +9,21 @@ export default defineConfig({
     react(),
     dts({ 
       insertTypesEntry: true,
-      outDir: 'dist/types'
+      outDir: ['dist/types']
     }),
     cssInjectedByJs()  // CSS를 JS에 포함시키는 플러그인 추가
   ],
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'ShadcnTailwindUI',
       formats: ['es', 'cjs'],
-      fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`
+      fileName: (format) => `${format === 'es' ? 'esm' : 'cjs'}/index.js`
     },
     rollupOptions: {
       external: ['react', 'react-dom'],
       output: {
+        preserveModules: true,
+        preserveModulesRoot: 'src',
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM'

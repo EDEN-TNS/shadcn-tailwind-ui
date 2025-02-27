@@ -1,13 +1,25 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="HOME/Start" />
+
+# <center>@edentns/shadcn-tailwind-ui</center>
+
+##
+
+<br />
+<div align="center">
+    <img
+        alt="Logo"
+        src="https://github.com/EDEN-TNS/assets-ui/blob/main/images/eden-tns-logo.png?raw=true"
+        width="500"
+    />
+</div>
+
+<br />
 <br />
 
-<p align="center">
-  <img src="https://github.com/EDEN-TNS/assets-ui/blob/main/images/eden-tns-logo.png?raw=true" alt="EdenTNS Logo" width="500" />
-</p>
-
-<br />
-
-<p align="left" style="display: flex; gap: 4px; justify-content: center; margin-bottom: 20px;">
-  <a href="https://www.npmjs.com/package/@edentns/shadcn-tailwind-ui">
+<div align="center" style={{ display: 'flex', justifyContent: 'center', gap: '4px', marginBottom: '20px' }}>
+    <a href="https://www.npmjs.com/package/@edentns/shadcn-tailwind-ui">
         <img src="https://badgen.net/npm/v/@edentns/shadcn-tailwind-ui" alt="Latest release" />
     </a>
     <a href="https://github.com/EDEN-TNS/shadcn-tailwind-ui/blob/main/LICENSE">
@@ -19,20 +31,27 @@
             alt="with by EDENTNS"
         />
     </a>
-</p>
+</div>
 
-# @edentns/shadcn-tailwind-ui
+<div align="center">
+    <em>✨ shadcn/ui 기반 컴포넌트 라이브러리 🛠</em>
+</div>
 
-shadcn UI를 기반으로 제작된 React 컴포넌트 라이브러리입니다.
+# Getting started
 
-## 🎨 Features
+> 이 라이브러리는 shadcn/ui 기반 컴포넌트 모음입니다.
 
-- 🎨 shadcn UI 기반의 커스텀 디자인
-- ⚛️ React 18+ 지원
-- 🎭 Tailwind CSS를 통한 스타일링
-- 📦 Vite를 통한 번들링
+> 모든 컴포넌트의 상세 문서는 [스토리북](https://67beae8d6c317a64d5e86707-mmrtmdvnes.chromatic.com/)에서 확인할 수 있습니다.
 
-## 💾 Installation
+<br />
+
+# Need Help?
+
+> 문제가 있거나 질문이 있으시면 [GitHub Issues](https://github.com/EDEN-TNS/shadcn-tailwind-ui/issues)에 등록해주세요.
+
+<br />
+
+# 💾 Installation
 
 ```bash
 npm install @edentns/shadcn-tailwind-ui
@@ -42,11 +61,14 @@ or
 yarn add @edentns/shadcn-tailwind-ui
 ```
 
-## 🔨 Usage
+# 🔨 Usage
 
-[`storybook`](https://67beae8d6c317a64d5e86707-mmrtmdvnes.chromatic.com/)
+```jsx
+import { SCButton, SCInput } from '@edentns/shadcn-tailwind-ui';
+import { SCAlertDialog } from '@edentns/shadcn-tailwind-ui';
+```
 
-## 📙 Project Structure and Directory Description
+# 📙 Project Structure and Directory Description
 
 ```bash
 📦src
@@ -72,9 +94,3 @@ yarn add @edentns/shadcn-tailwind-ui
 ┣ 📜index.ts           // 라이브러리 진입점 및 컴포넌트 export
 ┗ 📜vite-env.d.ts      // Vite 타입 정의 파일
 ```
-
-<br>
-
-## 📜 License
-
-This software is licensed under the MIT © [`EdenTNS`](https://edentns.com/)
