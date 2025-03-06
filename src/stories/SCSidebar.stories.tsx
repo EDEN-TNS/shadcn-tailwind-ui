@@ -1,4 +1,4 @@
-import { Folder, Home, Menu, PanelLeft, Settings, Users } from 'lucide-react';
+import { Folder, Home, Menu, Settings, Users } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { SCSidebar } from '@/components/custom/sidebar/SCSidebar';

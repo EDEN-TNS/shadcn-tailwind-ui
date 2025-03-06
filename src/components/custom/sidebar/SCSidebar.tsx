@@ -1,4 +1,3 @@
-import { ChevronRight, Menu } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
     Sidebar,
@@ -21,6 +20,7 @@ import {
 
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { ChevronRight } from 'lucide-react';
 import React from 'react';
 import { SCScrollArea } from '@/components/custom/scrollArea/SCScrollArea';
 import { cn } from '@/lib/utils';
