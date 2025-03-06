@@ -7,6 +7,59 @@ const meta: Meta<typeof SCAccordion> = {
     tags: ['autodocs'],
     parameters: {
         componentSubtitle: '접을 수 있는 아코디언 컴포넌트',
+        docs: {
+            description: {
+                component: `
+# 아코디언 컴포넌트
+
+\`SCAccordion\` 컴포넌트는 콘텐츠를 접고 펼칠 수 있는 아코디언 UI를 제공합니다.
+
+## 기본 기능
+- 단일 또는 다중 항목 확장 지원
+- 다양한 크기 옵션 (sm, default, lg)
+- 기본 확장 항목 설정 가능
+- 커스텀 스타일링 지원
+- 복잡한 컴포넌트를 내용으로 포함 가능
+
+## 사용 방법
+
+\`\`\`jsx
+import { SCAccordion } from '@edentns/shadcn-tailwind-ui';
+
+const items = [
+  {
+    id: '1',
+    title: '아코디언 항목 1',
+    content: '첫 번째 아코디언의 내용입니다.',
+  },
+  {
+    id: '2',
+    title: '아코디언 항목 2',
+    content: '두 번째 아코디언의 내용입니다.',
+  },
+];
+
+<SCAccordion items={items} />
+\`\`\`
+
+## 다중 선택 아코디언
+
+\`\`\`jsx
+<SCAccordion items={items} type="multiple" defaultValue={['1']} />
+\`\`\`
+
+## 속성
+
+| 속성 | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| items | AccordionItem[] | required | 아코디언 항목 배열 |
+| type | 'single' \| 'multiple' | 'single' | 아코디언 타입 |
+| defaultValue | string \| string[] | undefined | 기본 확장 항목 |
+| size | 'sm' \| 'default' \| 'lg' | 'default' | 아코디언 크기 |
+| customClassName | string | undefined | 추가 CSS 클래스 |
+`,
+            },
+        },
     },
 };
 

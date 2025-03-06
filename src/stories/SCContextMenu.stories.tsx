@@ -1,7 +1,5 @@
+import { MenuItem, SCContextMenu } from '@/components/custom/contextMenu/SCContextMenu';
 import type { Meta, StoryObj } from '@storybook/react';
-
-import type { MenuItem } from '@/components/custom/contextMenu/SCContextMenu';
-import { SCContextMenu } from '@/components/custom/contextMenu/SCContextMenu';
 
 const meta: Meta<typeof SCContextMenu> = {
     title: 'Components/SCContextMenu',
@@ -12,23 +10,56 @@ const meta: Meta<typeof SCContextMenu> = {
         docs: {
             description: {
                 component: `
-## 사용법
-컨텍스트 메뉴 아이템은 다음과 같은 구조로 정의합니다:
+# 컨텍스트 메뉴 컴포넌트
 
-\`\`\`typescript
-interface MenuItem {
-  id: string;          // 고유 식별자
-  label?: string;      // 메뉴 텍스트
-  shortcut?: string;   // 단축키 (예: "⌘[")
-  disabled?: boolean;  // 비활성화 여부
-  type?: 'item' | 'checkbox' | 'separator' | 'sub' | 'radio-group';
-  checked?: boolean;   // checkbox 타입일 때 체크 상태
-  items?: MenuItem[];  // 서브메뉴 아이템
-  value?: string;      // radio 아이템용
-  inset?: boolean;     // 들여쓰기 여부
-}
+\`SCContextMenu\` 컴포넌트는 우클릭 또는 트리거 요소 클릭 시 표시되는 컨텍스트 메뉴를 제공합니다.
+
+## 기본 기능
+- 우클릭 또는 트리거 요소 클릭으로 메뉴 표시
+- 체크박스 및 라디오 버튼 메뉴 항목 지원
+- 중첩 서브메뉴 지원
+- 키보드 단축키 지원
+- 접근성을 고려한 키보드 네비게이션
+- 다양한 메뉴 항목 타입 지원 (일반, 체크박스, 라디오, 구분선, 서브메뉴)
+
+## 사용법
+
+\`\`\`jsx
+import { SCContextMenu } from '@edentns/shadcn-tailwind-ui';
+
+<SCContextMenu
+  trigger={<div>우클릭하세요</div>}
+  items={[
+    { id: 'edit', label: '편집' },
+    { id: 'copy', label: '복사' },
+    { id: 'delete', label: '삭제' }
+  ]}
+  onItemClick={(item) => console.log('클릭된 항목:', item)}
+/>
 \`\`\`
-                `,
+
+## 속성
+
+| 속성 | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| trigger | React.ReactNode | required | 메뉴를 표시할 트리거 요소 |
+| items | MenuItem[] | required | 메뉴 항목 배열 |
+| onItemClick | (item: MenuItem) => void | undefined | 메뉴 항목 클릭 시 호출되는 함수 |
+| className | string | undefined | 추가 CSS 클래스 |
+
+## MenuItem 타입
+
+| 속성 | 타입 | 설명 |
+|------|------|------|
+| id | string | 항목의 고유 ID |
+| label | string | 항목의 레이블 |
+| type | 'item' \| 'checkbox' \| 'radio-group' \| 'separator' \| 'sub' | 항목 타입 |
+| disabled | boolean | 항목 비활성화 여부 |
+| checked | boolean | 체크박스 항목의 체크 상태 |
+| value | string | 라디오 그룹의 선택된 값 |
+| items | MenuItem[] | 서브메뉴 또는 라디오 그룹의 하위 항목 |
+| shortcut | { key: string, metaKey?: boolean, altKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, display: string } | 키보드 단축키 정보 |
+`,
             },
         },
     },
@@ -37,169 +68,95 @@ interface MenuItem {
 export default meta;
 type Story = StoryObj<typeof SCContextMenu>;
 
-const defaultItems = [
-    {
-        id: 'back',
-        label: 'Back',
-        shortcut: {
-            key: '[',
-            metaKey: true,
-            display: '⌘[',
-        },
-        inset: true,
-    },
-    {
-        id: 'forward',
-        label: 'Forward',
-        shortcut: {
-            key: ']',
-            metaKey: true,
-            display: '⌘]',
-        },
-        disabled: true,
-        inset: true,
-    },
-    {
-        id: 'reload',
-        label: 'Reload',
-        shortcut: {
-            key: 'r',
-            metaKey: true,
-            display: '⌘R',
-        },
-        inset: true,
-    },
-    {
-        id: 'more-tools',
-        label: 'More Tools',
-        type: 'sub' as const,
-        inset: true,
-        items: [
-            {
-                id: 'save',
-                label: 'Save Page As...',
-                shortcut: {
-                    key: 's',
-                    metaKey: true,
-                    shiftKey: true,
-                    display: '⇧⌘S',
-                },
-            },
-            {
-                id: 'shortcut',
-                label: 'Create Shortcut...',
-            },
-            {
-                id: 'separator1',
-                type: 'separator' as const,
-            },
-            {
-                id: 'dev-tools',
-                label: 'Developer Tools',
-            },
-        ],
-    },
-    {
-        id: 'separator2',
-        type: 'separator' as const,
-    },
-    {
-        id: 'bookmark-bar',
-        type: 'checkbox' as const,
-        label: 'Show Bookmarks Bar',
-        shortcut: {
-            key: 'b',
-            metaKey: true,
-            shiftKey: true,
-            display: '⌘⇧B',
-        },
-        checked: true,
-    },
-    {
-        id: 'full-urls',
-        type: 'checkbox' as const,
-        label: 'Show Full URLs',
-        checked: false,
-    },
-    {
-        id: 'separator3',
-        type: 'separator' as const,
-    },
-    {
-        id: 'people',
-        type: 'radio-group' as const,
-        label: 'People',
-        value: 'pedro',
-        items: [
-            { value: 'pedro', label: 'Pedro Duarte' },
-            { value: 'colm', label: 'Colm Tuite' },
-        ],
-    },
-];
-
 export const Basic: Story = {
     args: {
-        trigger: (
-            <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm">
-                우클릭 하세요
-            </div>
-        ),
-        items: defaultItems,
+        trigger: <div className="border p-4">우클릭 또는 클릭하세요</div>,
+        items: [
+            { id: 'edit', label: '편집' },
+            { id: 'copy', label: '복사' },
+            { id: 'delete', label: '삭제' },
+        ],
     },
     parameters: {
         docs: {
             description: {
                 story: '기본적인 컨텍스트 메뉴 예제입니다.',
             },
-            source: {
-                code: `
-const items = [
-    {
-        id: 'back',
-        label: 'Back',
-        shortcut: '⌘[',
-        inset: true,
+        },
     },
-    {
-        id: 'more-tools',
-        label: 'More Tools',
-        type: 'sub',
+};
+
+export const WithSeparator: Story = {
+    args: {
+        trigger: <div className="border p-4">구분선이 있는 메뉴</div>,
         items: [
-            {
-                id: 'save',
-                label: 'Save Page As...',
-                shortcut: '⇧⌘S',
-            },
-            // ... more items
+            { id: 'cut', label: '잘라내기' },
+            { id: 'copy', label: '복사' },
+            { id: 'paste', label: '붙여넣기' },
+            { id: 'separator-1', type: 'separator' },
+            { id: 'delete', label: '삭제' },
         ],
     },
-    // ... more items
-];
-
-<SCContextMenu
-    trigger={<div>우클릭 하세요</div>}
-    items={items}
-    onItemClick={(item) => console.log(\`Clicked: \${item.id}\`)}
-/>`,
-                language: 'tsx',
+    parameters: {
+        docs: {
+            description: {
+                story: '구분선을 포함한 메뉴 예제입니다.',
             },
         },
     },
 };
 
-export const SimpleMenu: Story = {
+export const WithDisabled: Story = {
     args: {
-        trigger: <div className="border p-4">Simple Menu</div>,
+        trigger: <div className="border p-4">비활성화 항목이 있는 메뉴</div>,
+        items: [
+            { id: 'edit', label: '편집' },
+            { id: 'copy', label: '복사' },
+            { id: 'paste', label: '붙여넣기', disabled: true },
+            { id: 'delete', label: '삭제' },
+        ],
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '비활성화된 항목을 포함한 메뉴 예제입니다.',
+            },
+        },
+    },
+};
+
+export const WithShortcut: Story = {
+    args: {
+        trigger: <div className="border p-4">단축키가 있는 메뉴</div>,
         items: [
             {
-                id: 'edit',
-                label: '수정하기',
+                id: 'cut',
+                label: '잘라내기',
                 shortcut: {
-                    key: 'e',
+                    key: 'x',
                     metaKey: true,
-                    display: '⌘E',
+                    display: '⌘X',
                 },
             },
+            {
+                id: 'copy',
+                label: '복사하기',
+                shortcut: {
+                    key: 'c',
+                    metaKey: true,
+                    display: '⌘C',
+                },
+            },
+            {
+                id: 'paste',
+                label: '붙여넣기',
+                shortcut: {
+                    key: 'v',
+                    metaKey: true,
+                    display: '⌘V',
+                },
+            },
+            { id: 'separator-1', type: 'separator' },
             {
                 id: 'delete',
                 label: '삭제하기',

@@ -11,6 +11,7 @@ interface SCCardProps {
     headerClassName?: string;
     contentClassName?: string;
     footerClassName?: string;
+    children?: React.ReactNode;
 }
 
 export const SCCard = React.memo(
@@ -23,6 +24,7 @@ export const SCCard = React.memo(
         headerClassName,
         contentClassName,
         footerClassName,
+        children,
     }: SCCardProps) => {
         return (
             <Card className={className}>
@@ -34,6 +36,7 @@ export const SCCard = React.memo(
                 )}
                 {content && <CardContent className={contentClassName}>{content}</CardContent>}
                 {footer && <CardFooter className={footerClassName}>{footer}</CardFooter>}
+                {children && <CardContent className={contentClassName}>{children}</CardContent>}
             </Card>
         );
     },

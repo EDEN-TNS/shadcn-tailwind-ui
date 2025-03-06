@@ -14,6 +14,17 @@ const meta: Meta<typeof SCTabs> = {
         docs: {
             description: {
                 component: `
+# 탭 컴포넌트
+
+\`SCTabs\` 컴포넌트는 콘텐츠를 탭으로 구분하여 표시하는 UI 요소입니다.
+
+## 기본 기능
+- 여러 탭 간 전환 지원
+- 비활성화된 탭 지원
+- 탭 변경 이벤트 콜백 지원
+- 커스텀 스타일링 지원
+- 접근성을 고려한 키보드 네비게이션
+
 ## 사용법
 탭 아이템은 다음과 같은 구조로 정의합니다:
 
@@ -24,6 +35,34 @@ interface TabItem {
     content: React.ReactNode;  // 탭 내용
     disabled?: boolean;  // 비활성화 여부
 }
+\`\`\`
+
+\`\`\`jsx
+import { SCTabs } from '@edentns/shadcn-tailwind-ui';
+
+const tabs = [
+  {
+    value: 'account',
+    label: '계정',
+    content: <AccountSettings />
+  },
+  {
+    value: 'password',
+    label: '비밀번호',
+    content: <PasswordSettings />
+  },
+  {
+    value: 'notifications',
+    label: '알림',
+    content: <NotificationSettings />,
+    disabled: true
+  }
+];
+
+<SCTabs 
+  items={tabs} 
+  onChange={(value) => console.log('선택된 탭:', value)} 
+/>
 \`\`\`
                 `,
             },
