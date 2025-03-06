@@ -1,3 +1,4 @@
+import { ChevronRight, Menu } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
     Sidebar,
@@ -15,10 +16,11 @@ import {
     SidebarProvider,
     SidebarRail,
     SidebarTrigger,
+    useSidebar,
 } from '@/components/ui/sidebar';
 
 import { Avatar } from '@/components/ui/avatar';
-import { ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { SCScrollArea } from '@/components/custom/scrollArea/SCScrollArea';
 import { cn } from '@/lib/utils';
@@ -60,6 +62,8 @@ interface SCSidebarProps {
     sections?: string[];
     collapsible?: boolean;
     hideToggle?: boolean;
+    triggerIcon?: React.ReactNode;
+    triggerClassName?: string;
 }
 
 export const SCSidebar = React.memo(
@@ -73,6 +77,8 @@ export const SCSidebar = React.memo(
         sections,
         collapsible = true,
         hideToggle = false,
+        triggerIcon,
+        triggerClassName,
     }: SCSidebarProps) => {
         const isActive = React.useCallback(
             (href?: string, items?: { href: string }[]) => {
@@ -141,6 +147,23 @@ export const SCSidebar = React.memo(
             ),
             [isActive, currentPath],
         );
+
+        // 커스텀 트리거 컴포넌트
+        const CustomTrigger = React.useCallback(() => {
+            const { toggleSidebar } = useSidebar();
+            return (
+                <Button
+                    onClick={toggleSidebar}
+                    data-sidebar="trigger"
+                    variant="ghost"
+                    size="icon"
+                    className={cn('h-7 w-7', triggerClassName)}
+                >
+                    {triggerIcon}
+                    <span className="sr-only">Toggle Sidebar</span>
+                </Button>
+            );
+        }, [triggerClassName, triggerIcon]);
 
         return (
             <SidebarProvider defaultOpen>
@@ -213,7 +236,9 @@ export const SCSidebar = React.memo(
                     </SidebarFooter>
                     <SidebarRail />
                 </Sidebar>
-                {!hideToggle && collapsible && <SidebarTrigger />}
+                {!hideToggle &&
+                    collapsible &&
+                    (triggerIcon ? <CustomTrigger /> : <SidebarTrigger className={triggerClassName} />)}
             </SidebarProvider>
         );
     },
