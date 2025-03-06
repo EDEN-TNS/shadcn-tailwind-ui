@@ -56,6 +56,23 @@ const menuItems = [
   },
 ];
 
+// 섹션 그룹이 있는 사이드바
+<SCSidebar
+  menuItems={menuItems}
+  sections={['Platform', 'Projects']}
+  organization={{
+    name: '샘플 조직',
+    logo: '🏢',
+  }}
+  user={{
+    name: '홍길동',
+    email: 'hong@example.com',
+    avatar: 'https://github.com/shadcn.png',
+  }}
+  currentPath="/settings/security"
+/>
+
+// 섹션 그룹이 없는 사이드바
 <SCSidebar
   menuItems={menuItems}
   organization={{
@@ -109,12 +126,32 @@ const defaultMenuItems = [
     },
 ];
 
-export const Default: Story = {
+// 섹션 그룹이 있는 사이드바
+export const WithSections: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+        },
+    },
+};
+
+// 섹션 그룹이 없는 사이드바
+export const WithoutSections: Story = {
     args: {
         menuItems: defaultMenuItems,
         organization: {
             name: '샘플 조직',
             logo: '🏢',
+            subText: '엔터프라이즈 버전',
         },
         user: {
             name: '홍길동',
@@ -127,16 +164,270 @@ export const Default: Story = {
 export const WithoutUser: Story = {
     args: {
         menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
         organization: {
             name: '샘플 조직',
             logo: '🏢',
+            subText: '엔터프라이즈 버전',
         },
     },
 };
 
 export const WithCurrentPath: Story = {
     args: {
-        ...Default.args,
+        ...WithSections.args,
         currentPath: '/settings/security',
+    },
+};
+
+// subText가 없는 조직 예제
+export const WithoutSubText: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            // subText 없음
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+        },
+    },
+};
+
+// 다양한 subText 길이 예제
+export const WithLongSubText: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '매우 긴 서브텍스트가 있는 엔터프라이즈 버전 - 텍스트가 잘리는지 확인',
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+        },
+    },
+};
+
+// 커스텀 로고 배경색 예제
+export const CustomLogoBackground: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+            logoBgColor: 'bg-blue-500', // 커스텀 로고 배경색 적용
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+        },
+    },
+};
+
+// 사이드바 접기/펴기 기능 비활성화 예제
+export const NonCollapsible: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+        },
+        collapsible: false, // 사이드바 접기/펴기 기능 비활성화
+    },
+};
+
+// 토글 버튼 숨김 예제
+export const HiddenToggle: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+        },
+        hideToggle: true, // 토글 버튼 숨김
+    },
+};
+
+// 그라데이션 로고 배경색 예제
+export const GradientLogoBackground: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+            logoBgColor: 'bg-gradient-to-r from-purple-500 to-pink-500', // 그라데이션 배경색 적용
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+        },
+    },
+};
+
+// 많은 메뉴 아이템으로 스크롤 테스트를 위한 예제
+export const WithManyItems: Story = {
+    args: {
+        menuItems: [
+            ...defaultMenuItems,
+            // 추가 메뉴 아이템들
+            {
+                icon: Home,
+                label: '메뉴 아이템 1',
+                href: '/item1',
+                section: 'Extra',
+            },
+            {
+                icon: Settings,
+                label: '메뉴 아이템 2',
+                href: '/item2',
+                section: 'Extra',
+            },
+            {
+                icon: Folder,
+                label: '메뉴 아이템 3',
+                href: '/item3',
+                section: 'Extra',
+            },
+            {
+                icon: Users,
+                label: '메뉴 아이템 4',
+                href: '/item4',
+                section: 'Extra',
+            },
+            {
+                icon: Home,
+                label: '메뉴 아이템 5',
+                href: '/item5',
+                section: 'More',
+            },
+            {
+                icon: Settings,
+                label: '메뉴 아이템 6',
+                href: '/item6',
+                section: 'More',
+            },
+            {
+                icon: Folder,
+                label: '메뉴 아이템 7',
+                href: '/item7',
+                section: 'More',
+            },
+            {
+                icon: Users,
+                label: '메뉴 아이템 8',
+                href: '/item8',
+                section: 'More',
+            },
+            {
+                icon: Home,
+                label: '메뉴 아이템 9',
+                href: '/item9',
+                section: 'Even More',
+            },
+            {
+                icon: Settings,
+                label: '메뉴 아이템 10',
+                href: '/item10',
+                section: 'Even More',
+            },
+            {
+                icon: Folder,
+                label: '메뉴 아이템 11',
+                href: '/item11',
+                section: 'Even More',
+            },
+            {
+                icon: Users,
+                label: '메뉴 아이템 12',
+                href: '/item12',
+                section: 'Even More',
+            },
+        ],
+        sections: ['Platform', 'Projects', 'Extra', 'More', 'Even More'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+        },
+        // 스토리북에서 사이드바 높이를 제한하여 스크롤이 필요하게 만듭니다
+        className: 'h-[500px]', // 높이를 제한하여 스크롤이 필요하게 함
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '많은 메뉴 아이템을 포함하여 스크롤 기능을 테스트하는 예제입니다. 사이드바 내용이 넘칠 경우 자동으로 스크롤이 생성됩니다.',
+            },
+        },
+    },
+};
+
+// 서브메뉴가 많은 아이템으로 스크롤 테스트를 위한 예제
+export const WithManySubItems: Story = {
+    args: {
+        menuItems: [
+            {
+                icon: Settings,
+                label: '설정',
+                section: 'Platform',
+                items: Array.from({ length: 15 }, (_, i) => ({
+                    label: `설정 항목 ${i + 1}`,
+                    href: `/settings/item${i + 1}`,
+                })),
+            },
+            ...defaultMenuItems.filter(item => item.label !== '설정'),
+        ],
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+        },
+        // 스토리북에서 사이드바 높이를 제한하여 스크롤이 필요하게 만듭니다
+        className: 'h-[500px]', // 높이를 제한하여 스크롤이 필요하게 함
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '많은 서브메뉴 아이템을 포함하여 스크롤 기능을 테스트하는 예제입니다. 서브메뉴가 펼쳐질 때 내용이 넘칠 경우 자동으로 스크롤이 생성됩니다.',
+            },
+        },
     },
 };

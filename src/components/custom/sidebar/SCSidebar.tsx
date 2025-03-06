@@ -20,6 +20,7 @@ import {
 import { Avatar } from '@/components/ui/avatar';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
+import { SCScrollArea } from '@/components/custom/scrollArea/SCScrollArea';
 import { cn } from '@/lib/utils';
 
 const SC_SIDEBAR_SIZES = {
@@ -44,6 +45,8 @@ interface SCSidebarProps {
     organization?: {
         name: string;
         logo: React.ReactNode;
+        subText?: string;
+        logoBgColor?: string;
     };
     user?: {
         name: string;
@@ -54,10 +57,23 @@ interface SCSidebarProps {
     className?: string;
     currentPath?: string;
     size?: keyof typeof SC_SIDEBAR_SIZES;
+    sections?: string[];
+    collapsible?: boolean;
+    hideToggle?: boolean;
 }
 
 export const SCSidebar = React.memo(
-    ({ organization, user, menuItems, className, currentPath = '/', size = 'default' }: SCSidebarProps) => {
+    ({
+        organization,
+        user,
+        menuItems,
+        className,
+        currentPath = '/',
+        size = 'default',
+        sections,
+        collapsible = true,
+        hideToggle = false,
+    }: SCSidebarProps) => {
         const isActive = React.useCallback(
             (href?: string, items?: { href: string }[]) => {
                 if (items) {
@@ -128,19 +144,31 @@ export const SCSidebar = React.memo(
 
         return (
             <SidebarProvider defaultOpen>
-                <Sidebar collapsible="icon" className={cn('border-r', SC_SIDEBAR_SIZES[size], className)}>
+                <Sidebar
+                    collapsible={collapsible ? 'icon' : 'none'}
+                    className={cn('h-screen border-r', SC_SIDEBAR_SIZES[size], className)}
+                >
                     <SidebarHeader>
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton size="lg">
-                                    <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                                    <div
+                                        className={cn(
+                                            'flex size-8 shrink-0 items-center justify-center rounded-lg text-sidebar-primary-foreground',
+                                            organization?.logoBgColor ? organization.logoBgColor : 'bg-sidebar-primary',
+                                        )}
+                                    >
                                         <div className="flex size-4 items-center justify-center">
                                             {organization?.logo}
                                         </div>
                                     </div>
                                     <div className="grid flex-1 text-left text-sm leading-tight">
                                         <span className="truncate font-semibold">{organization?.name}</span>
-                                        <span className="truncate text-xs text-muted-foreground">Enterprise</span>
+                                        {organization?.subText && (
+                                            <span className="truncate text-xs text-muted-foreground">
+                                                {organization?.subText}
+                                            </span>
+                                        )}
                                     </div>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -148,14 +176,20 @@ export const SCSidebar = React.memo(
                     </SidebarHeader>
 
                     <SidebarContent>
-                        {['Platform', 'Projects'].map(section => (
-                            <SidebarGroup key={section}>
-                                <SidebarGroupLabel>{section}</SidebarGroupLabel>
-                                <SidebarMenu>
-                                    {menuItems.filter(item => item.section === section).map(renderMenuItem)}
-                                </SidebarMenu>
-                            </SidebarGroup>
-                        ))}
+                        <SCScrollArea className="h-full">
+                            {sections ? (
+                                sections.map(section => (
+                                    <SidebarGroup key={section}>
+                                        <SidebarGroupLabel>{section}</SidebarGroupLabel>
+                                        <SidebarMenu>
+                                            {menuItems.filter(item => item.section === section).map(renderMenuItem)}
+                                        </SidebarMenu>
+                                    </SidebarGroup>
+                                ))
+                            ) : (
+                                <SidebarMenu className="px-3 pt-3">{menuItems.map(renderMenuItem)}</SidebarMenu>
+                            )}
+                        </SCScrollArea>
                     </SidebarContent>
 
                     <SidebarFooter>
@@ -177,7 +211,7 @@ export const SCSidebar = React.memo(
                     </SidebarFooter>
                     <SidebarRail />
                 </Sidebar>
-                <SidebarTrigger />
+                {!hideToggle && collapsible && <SidebarTrigger />}
             </SidebarProvider>
         );
     },
