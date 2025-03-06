@@ -1,4 +1,4 @@
-import { Folder, Home, Settings, Users } from 'lucide-react';
+import { Folder, Home, Menu, PanelLeft, Settings, Users } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { SCSidebar } from '@/components/custom/sidebar/SCSidebar';
@@ -25,12 +25,14 @@ const meta: Meta<typeof SCSidebar> = {
 - 사용자 프로필 표시
 - 조직 정보 표시
 - 반응형 디자인 지원
+- 커스텀 토글 아이콘 지원
+- 토글 버튼 위치 조정 가능
 
 ## 사용법
 
 \`\`\`jsx
 import { SCSidebar } from '@edentns/shadcn-tailwind-ui';
-import { Home, Settings, Users } from 'lucide-react';
+import { Home, Menu, Settings, Users } from 'lucide-react';
 
 const menuItems = [
   {
@@ -70,6 +72,8 @@ const menuItems = [
     avatar: 'https://github.com/shadcn.png',
   }}
   currentPath="/settings/security"
+  triggerIcon={<Menu className="h-4 w-4" />}
+  triggerClassName="absolute top-4 right-[-12px]"
 />
 
 // 섹션 그룹이 없는 사이드바
@@ -427,6 +431,53 @@ export const WithManySubItems: Story = {
         docs: {
             description: {
                 story: '많은 서브메뉴 아이템을 포함하여 스크롤 기능을 테스트하는 예제입니다. 서브메뉴가 펼쳐질 때 내용이 넘칠 경우 자동으로 스크롤이 생성됩니다.',
+            },
+        },
+    },
+};
+
+// 커스텀 토글 아이콘 예제
+export const CustomTriggerIcon: Story = {
+    args: {
+        ...WithSections.args,
+        triggerIcon: <Menu className="h-4 w-4" />,
+        triggerClassName: 'ml-2 mt-2',
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '사용자 정의 토글 아이콘을 사용하는 예제입니다. triggerIcon 속성을 통해 원하는 아이콘을 지정할 수 있습니다.',
+            },
+        },
+    },
+};
+
+// 커스텀 토글 위치 예제
+export const CustomTriggerPosition: Story = {
+    args: {
+        ...WithSections.args,
+        triggerClassName: 'absolute top-4 right-[-12px] bg-background border rounded-full p-1 shadow-sm',
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '사용자 정의 토글 위치와 스타일을 사용하는 예제입니다. triggerClassName 속성을 통해 위치와 스타일을 조정할 수 있습니다.',
+            },
+        },
+    },
+};
+
+// 하단 토글 위치 예제
+export const BottomTriggerPosition: Story = {
+    args: {
+        ...WithSections.args,
+        triggerIcon: <Menu className="h-4 w-4" />,
+        triggerClassName: 'absolute bottom-4 right-[-12px] bg-background border rounded-full p-1 shadow-sm',
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '토글 버튼을 사이드바 하단에 위치시키는 예제입니다. triggerClassName을 사용하여 위치를 조정했습니다.',
             },
         },
     },
