@@ -187,7 +187,9 @@ export const SCSidebar = React.memo(
                                     </SidebarGroup>
                                 ))
                             ) : (
-                                <SidebarMenu className="px-3 pt-3">{menuItems.map(renderMenuItem)}</SidebarMenu>
+                                <SidebarGroup>
+                                    <SidebarMenu>{menuItems.map(renderMenuItem)}</SidebarMenu>
+                                </SidebarGroup>
                             )}
                         </SCScrollArea>
                     </SidebarContent>
