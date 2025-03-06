@@ -18,10 +18,10 @@ import {
     useSidebar,
 } from '@/components/ui/sidebar';
 
-import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
+import { SCAvatar } from '@/components/custom/avatar/SCAvatar';
 import { SCScrollArea } from '@/components/custom/scrollArea/SCScrollArea';
 import { cn } from '@/lib/utils';
 
@@ -53,7 +53,9 @@ interface SCSidebarProps {
     user?: {
         name: string;
         email: string;
-        avatar: string;
+        avatar?: string;
+        avatarBgColor?: string;
+        avatarClassName?: string;
     };
     menuItems: MenuItem[];
     className?: string;
@@ -222,9 +224,12 @@ export const SCSidebar = React.memo(
                             <SidebarMenu>
                                 <SidebarMenuItem>
                                     <SidebarMenuButton size="lg">
-                                        <Avatar className="h-8 w-8">
-                                            <img src={user.avatar} alt={user.name} />
-                                        </Avatar>
+                                        <SCAvatar
+                                            src={user.avatar}
+                                            alt={user.name}
+                                            className={cn('h-8 w-8', user.avatarClassName)}
+                                            fallbackClassName={user.avatarBgColor}
+                                        />
                                         <div className="grid flex-1 text-left text-sm leading-tight">
                                             <span className="truncate font-semibold">{user.name}</span>
                                             <span className="truncate text-xs text-muted-foreground">{user.email}</span>

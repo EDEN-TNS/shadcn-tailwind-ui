@@ -139,12 +139,22 @@ export const WithSections: Story = {
             name: '샘플 조직',
             logo: '🏢',
             subText: '엔터프라이즈 버전',
+            logoBgColor: 'bg-primary',
         },
         user: {
             name: '홍길동',
             email: 'hong@example.com',
             avatar: 'https://github.com/shadcn.png',
+            avatarClassName: 'h-8 w-8',
+            avatarBgColor: 'bg-blue-500',
         },
+        collapsible: true,
+        hideToggle: false,
+        triggerIcon: undefined,
+        triggerClassName: undefined,
+        className: undefined,
+        currentPath: '/',
+        size: 'default',
     },
 };
 
@@ -478,6 +488,133 @@ export const BottomTriggerPosition: Story = {
         docs: {
             description: {
                 story: '토글 버튼을 사이드바 하단에 위치시키는 예제입니다. triggerClassName을 사용하여 위치를 조정했습니다.',
+            },
+        },
+    },
+};
+
+// 아바타 없는 사용자 예제 추가
+export const WithoutAvatar: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            // avatar 속성 없음 - 이니셜이 표시되어야 함
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '사용자 아바타 이미지가 없는 경우 이름의 이니셜이 표시됩니다.',
+            },
+        },
+    },
+};
+
+// 긴 이름을 가진 사용자 예제
+export const WithLongUserName: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+        },
+        user: {
+            name: '김길동 홍길동 이길동',
+            email: 'kim.hong.lee@example.com',
+            // avatar 속성 없음 - 이니셜이 표시되어야 함
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '여러 단어로 구성된 이름의 경우, 각 단어의 첫 글자를 추출하여 최대 2글자까지 이니셜로 표시합니다. 예: "김길동 홍길동 이길동" → "김홍"',
+            },
+        },
+    },
+};
+
+// 잘못된 아바타 URL 예제
+export const WithBrokenAvatar: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+        },
+        user: {
+            name: 'Eden',
+            email: 'hong@example.com',
+            avatar: 'https://invalid-url-that-will-fail.com/image.png',
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '아바타 이미지 URL이 잘못되었거나 로드에 실패한 경우 이니셜이 표시됩니다.',
+            },
+        },
+    },
+};
+
+// 커스텀 아바타 크기 예제
+export const WithLargerAvatar: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+            avatarClassName: 'h-10 w-10', // 더 큰 아바타 크기 적용
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '사용자 아바타 크기를 더 크게 설정한 예제입니다.',
+            },
+        },
+    },
+};
+
+// 커스텀 아바타 배경색과 크기 조합 예제
+export const WithCustomAvatarStyle: Story = {
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatarClassName: 'h-12 w-12 border-2 border-primary', // 크기와 테두리 스타일 적용
+            avatarBgColor: 'bg-gradient-to-r from-blue-500 to-purple-500', // 그라데이션 배경색 적용
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '사용자 아바타에 커스텀 크기와 배경색을 함께 적용한 예제입니다.',
             },
         },
     },
