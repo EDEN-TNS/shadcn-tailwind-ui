@@ -2,6 +2,8 @@ import { Folder, Home, Menu, Settings, Users } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { SCSidebar } from '@/components/custom/sidebar/SCSidebar';
+import { SCSidebarProvider } from '@/components/custom/sidebar/SCSidebarProvider';
+import { SCSidebarTrigger } from '@/components/custom/sidebar/SCSidebarTrigger';
 
 const meta: Meta<typeof SCSidebar> = {
     title: 'Components/SCSidebar',
@@ -25,13 +27,19 @@ const meta: Meta<typeof SCSidebar> = {
 - 사용자 프로필 표시
 - 조직 정보 표시
 - 반응형 디자인 지원
-- 커스텀 토글 아이콘 지원
-- 토글 버튼 위치 조정 가능
+- 독립적인 토글 트리거 컴포넌트
+
+## 컴포넌트 구조
+- \`SCSidebarProvider\`: 사이드바의 상태를 관리하는 컨텍스트 제공자
+- \`SCSidebar\`: 메인 사이드바 컴포넌트
+- \`SCSidebarTrigger\`: 사이드바 토글 버튼 컴포넌트
 
 ## 사용법
 
 \`\`\`jsx
-import { SCSidebar } from '@edentns/shadcn-tailwind-ui';
+import { SCSidebarProvider } from '@/components/custom/sidebar/SCSidebarProvider';
+import { SCSidebar } from '@/components/custom/sidebar/SCSidebar';
+import { SCSidebarTrigger } from '@/components/custom/sidebar/SCSidebarTrigger';
 import { Home, Menu, Settings, Users } from 'lucide-react';
 
 const menuItems = [
@@ -58,43 +66,48 @@ const menuItems = [
   },
 ];
 
-// 섹션 그룹이 있는 사이드바
-<SCSidebar
-  menuItems={menuItems}
-  sections={['Platform', 'Projects']}
-  organization={{
-    name: '샘플 조직',
-    logo: '🏢',
-  }}
-  user={{
-    name: '홍길동',
-    email: 'hong@example.com',
-    avatar: 'https://github.com/shadcn.png',
-  }}
-  currentPath="/settings/security"
-  triggerIcon={<Menu className="h-4 w-4" />}
-  triggerClassName="absolute top-4 right-[-12px]"
-/>
-
-// 섹션 그룹이 없는 사이드바
-<SCSidebar
-  menuItems={menuItems}
-  organization={{
-    name: '샘플 조직',
-    logo: '🏢',
-  }}
-  user={{
-    name: '홍길동',
-    email: 'hong@example.com',
-    avatar: 'https://github.com/shadcn.png',
-  }}
-  currentPath="/settings/security"
-/>
+// 기본 사용 예시
+function MyLayout() {
+  return (
+    <SCSidebarProvider>
+      <div className="flex flex-1 w-full">
+        <SCSidebar
+          menuItems={menuItems}
+          sections={['Platform', 'Projects']}
+          organization={{
+            name: '샘플 조직',
+            logo: '🏢',
+          }}
+          user={{
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+          }}
+          currentPath="/settings/security"
+        />
+        <main className="relative flex-1">
+          <SCSidebarTrigger
+            triggerIcon={<Menu className="h-4 w-4" />}
+            triggerClassName="absolute left-[-12px] top-4"
+          />
+          {/* 메인 콘텐츠 */}
+        </main>
+      </div>
+    </SCSidebarProvider>
+  );
+}
 \`\`\`
 `,
             },
         },
     },
+    decorators: [
+        Story => (
+            <SCSidebarProvider>
+                <Story />
+            </SCSidebarProvider>
+        ),
+    ],
 };
 
 export default meta;
@@ -132,6 +145,14 @@ const defaultMenuItems = [
 
 // 섹션 그룹이 있는 사이드바
 export const WithSections: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
     args: {
         menuItems: defaultMenuItems,
         sections: ['Platform', 'Projects'],
@@ -139,27 +160,25 @@ export const WithSections: Story = {
             name: '샘플 조직',
             logo: '🏢',
             subText: '엔터프라이즈 버전',
-            logoBgColor: 'bg-primary',
         },
         user: {
             name: '홍길동',
             email: 'hong@example.com',
             avatar: 'https://github.com/shadcn.png',
-            avatarClassName: 'h-8 w-8',
-            avatarBgColor: 'bg-blue-500',
         },
-        collapsible: true,
-        hideToggle: false,
-        triggerIcon: undefined,
-        triggerClassName: undefined,
-        className: undefined,
-        currentPath: '/',
-        size: 'default',
     },
 };
 
 // 섹션 그룹이 없는 사이드바
 export const WithoutSections: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
     args: {
         menuItems: defaultMenuItems,
         organization: {
@@ -176,6 +195,14 @@ export const WithoutSections: Story = {
 };
 
 export const WithoutUser: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
     args: {
         menuItems: defaultMenuItems,
         sections: ['Platform', 'Projects'],
@@ -188,21 +215,35 @@ export const WithoutUser: Story = {
 };
 
 export const WithCurrentPath: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
     args: {
         ...WithSections.args,
         currentPath: '/settings/security',
     },
 };
 
-// subText가 없는 조직 예제
 export const WithoutSubText: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
     args: {
         menuItems: defaultMenuItems,
         sections: ['Platform', 'Projects'],
         organization: {
             name: '샘플 조직',
             logo: '🏢',
-            // subText 없음
         },
         user: {
             name: '홍길동',
@@ -212,8 +253,15 @@ export const WithoutSubText: Story = {
     },
 };
 
-// 다양한 subText 길이 예제
 export const WithLongSubText: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
     args: {
         menuItems: defaultMenuItems,
         sections: ['Platform', 'Projects'],
@@ -230,8 +278,15 @@ export const WithLongSubText: Story = {
     },
 };
 
-// 커스텀 로고 배경색 예제
 export const CustomLogoBackground: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
     args: {
         menuItems: defaultMenuItems,
         sections: ['Platform', 'Projects'],
@@ -239,7 +294,7 @@ export const CustomLogoBackground: Story = {
             name: '샘플 조직',
             logo: '🏢',
             subText: '엔터프라이즈 버전',
-            logoBgColor: 'bg-blue-500', // 커스텀 로고 배경색 적용
+            logoBgColor: 'bg-blue-500',
         },
         user: {
             name: '홍길동',
@@ -249,8 +304,13 @@ export const CustomLogoBackground: Story = {
     },
 };
 
-// 사이드바 접기/펴기 기능 비활성화 예제
 export const NonCollapsible: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1" />
+        </div>
+    ),
     args: {
         menuItems: defaultMenuItems,
         sections: ['Platform', 'Projects'],
@@ -264,31 +324,19 @@ export const NonCollapsible: Story = {
             email: 'hong@example.com',
             avatar: 'https://github.com/shadcn.png',
         },
-        collapsible: false, // 사이드바 접기/펴기 기능 비활성화
+        collapsible: false,
     },
 };
 
-// 토글 버튼 숨김 예제
-export const HiddenToggle: Story = {
-    args: {
-        menuItems: defaultMenuItems,
-        sections: ['Platform', 'Projects'],
-        organization: {
-            name: '샘플 조직',
-            logo: '🏢',
-            subText: '엔터프라이즈 버전',
-        },
-        user: {
-            name: '홍길동',
-            email: 'hong@example.com',
-            avatar: 'https://github.com/shadcn.png',
-        },
-        hideToggle: true, // 토글 버튼 숨김
-    },
-};
-
-// 그라데이션 로고 배경색 예제
 export const GradientLogoBackground: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
     args: {
         menuItems: defaultMenuItems,
         sections: ['Platform', 'Projects'],
@@ -296,7 +344,7 @@ export const GradientLogoBackground: Story = {
             name: '샘플 조직',
             logo: '🏢',
             subText: '엔터프라이즈 버전',
-            logoBgColor: 'bg-gradient-to-r from-purple-500 to-pink-500', // 그라데이션 배경색 적용
+            logoBgColor: 'bg-gradient-to-r from-purple-500 to-pink-500',
         },
         user: {
             name: '홍길동',
@@ -308,6 +356,14 @@ export const GradientLogoBackground: Story = {
 
 // 많은 메뉴 아이템으로 스크롤 테스트를 위한 예제
 export const WithManyItems: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
     args: {
         menuItems: [
             ...defaultMenuItems,
@@ -360,32 +416,8 @@ export const WithManyItems: Story = {
                 href: '/item8',
                 section: 'More',
             },
-            {
-                icon: Home,
-                label: '메뉴 아이템 9',
-                href: '/item9',
-                section: 'Even More',
-            },
-            {
-                icon: Settings,
-                label: '메뉴 아이템 10',
-                href: '/item10',
-                section: 'Even More',
-            },
-            {
-                icon: Folder,
-                label: '메뉴 아이템 11',
-                href: '/item11',
-                section: 'Even More',
-            },
-            {
-                icon: Users,
-                label: '메뉴 아이템 12',
-                href: '/item12',
-                section: 'Even More',
-            },
         ],
-        sections: ['Platform', 'Projects', 'Extra', 'More', 'Even More'],
+        sections: ['Platform', 'Projects', 'Extra', 'More'],
         organization: {
             name: '샘플 조직',
             logo: '🏢',
@@ -396,20 +428,26 @@ export const WithManyItems: Story = {
             email: 'hong@example.com',
             avatar: 'https://github.com/shadcn.png',
         },
-        // 스토리북에서 사이드바 높이를 제한하여 스크롤이 필요하게 만듭니다
-        className: 'h-[500px]', // 높이를 제한하여 스크롤이 필요하게 함
+        className: 'h-[500px]',
     },
     parameters: {
         docs: {
             description: {
-                story: '많은 메뉴 아이템을 포함하여 스크롤 기능을 테스트하는 예제입니다. 사이드바 내용이 넘칠 경우 자동으로 스크롤이 생성됩니다.',
+                story: '많은 메뉴 아이템을 포함하여 스크롤 기능을 테스트하는 예제입니다.',
             },
         },
     },
 };
 
-// 서브메뉴가 많은 아이템으로 스크롤 테스트를 위한 예제
 export const WithManySubItems: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
     args: {
         menuItems: [
             {
@@ -434,187 +472,80 @@ export const WithManySubItems: Story = {
             email: 'hong@example.com',
             avatar: 'https://github.com/shadcn.png',
         },
-        // 스토리북에서 사이드바 높이를 제한하여 스크롤이 필요하게 만듭니다
-        className: 'h-[500px]', // 높이를 제한하여 스크롤이 필요하게 함
+        className: 'h-[500px]',
     },
     parameters: {
         docs: {
             description: {
-                story: '많은 서브메뉴 아이템을 포함하여 스크롤 기능을 테스트하는 예제입니다. 서브메뉴가 펼쳐질 때 내용이 넘칠 경우 자동으로 스크롤이 생성됩니다.',
+                story: '많은 서브메뉴 아이템을 포함하여 스크롤 기능을 테스트하는 예제입니다.',
             },
         },
     },
 };
 
-// 커스텀 토글 아이콘 예제
-export const CustomTriggerIcon: Story = {
+// 다양한 트리거 위치 예제들
+export const TopRightTrigger: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger
+                    triggerIcon={<Menu className="h-4 w-4" />}
+                    triggerClassName="absolute right-4 top-4 bg-background border rounded-full p-1 shadow-sm"
+                />
+            </main>
+        </div>
+    ),
     args: {
         ...WithSections.args,
-        triggerIcon: <Menu className="h-4 w-4" />,
-        triggerClassName: 'ml-2 mt-2',
     },
     parameters: {
         docs: {
             description: {
-                story: '사용자 정의 토글 아이콘을 사용하는 예제입니다. triggerIcon 속성을 통해 원하는 아이콘을 지정할 수 있습니다.',
+                story: '트리거 버튼을 우측 상단에 위치시킨 예제입니다.',
             },
         },
     },
 };
 
-// 커스텀 토글 위치 예제
-export const CustomTriggerPosition: Story = {
+export const BottomRightTrigger: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger
+                    triggerIcon={<Menu className="h-4 w-4" />}
+                    triggerClassName="absolute right-4 bottom-4 bg-background border rounded-full p-1 shadow-sm"
+                />
+            </main>
+        </div>
+    ),
     args: {
         ...WithSections.args,
-        triggerClassName: 'absolute top-4 right-[-12px] bg-background border rounded-full p-1 shadow-sm',
     },
     parameters: {
         docs: {
             description: {
-                story: '사용자 정의 토글 위치와 스타일을 사용하는 예제입니다. triggerClassName 속성을 통해 위치와 스타일을 조정할 수 있습니다.',
+                story: '트리거 버튼을 우측 하단에 위치시킨 예제입니다.',
             },
         },
     },
 };
 
-// 하단 토글 위치 예제
-export const BottomTriggerPosition: Story = {
+export const WithoutTrigger: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1" />
+        </div>
+    ),
     args: {
         ...WithSections.args,
-        triggerIcon: <Menu className="h-4 w-4" />,
-        triggerClassName: 'absolute bottom-4 right-[-12px] bg-background border rounded-full p-1 shadow-sm',
     },
     parameters: {
         docs: {
             description: {
-                story: '토글 버튼을 사이드바 하단에 위치시키는 예제입니다. triggerClassName을 사용하여 위치를 조정했습니다.',
-            },
-        },
-    },
-};
-
-// 아바타 없는 사용자 예제 추가
-export const WithoutAvatar: Story = {
-    args: {
-        menuItems: defaultMenuItems,
-        sections: ['Platform', 'Projects'],
-        organization: {
-            name: '샘플 조직',
-            logo: '🏢',
-            subText: '엔터프라이즈 버전',
-        },
-        user: {
-            name: '홍길동',
-            email: 'hong@example.com',
-            // avatar 속성 없음 - 이니셜이 표시되어야 함
-        },
-    },
-    parameters: {
-        docs: {
-            description: {
-                story: '사용자 아바타 이미지가 없는 경우 이름의 이니셜이 표시됩니다.',
-            },
-        },
-    },
-};
-
-// 긴 이름을 가진 사용자 예제
-export const WithLongUserName: Story = {
-    args: {
-        menuItems: defaultMenuItems,
-        sections: ['Platform', 'Projects'],
-        organization: {
-            name: '샘플 조직',
-            logo: '🏢',
-            subText: '엔터프라이즈 버전',
-        },
-        user: {
-            name: '김길동 홍길동 이길동',
-            email: 'kim.hong.lee@example.com',
-            // avatar 속성 없음 - 이니셜이 표시되어야 함
-        },
-    },
-    parameters: {
-        docs: {
-            description: {
-                story: '여러 단어로 구성된 이름의 경우, 각 단어의 첫 글자를 추출하여 최대 2글자까지 이니셜로 표시합니다. 예: "김길동 홍길동 이길동" → "김홍"',
-            },
-        },
-    },
-};
-
-// 잘못된 아바타 URL 예제
-export const WithBrokenAvatar: Story = {
-    args: {
-        menuItems: defaultMenuItems,
-        sections: ['Platform', 'Projects'],
-        organization: {
-            name: '샘플 조직',
-            logo: '🏢',
-            subText: '엔터프라이즈 버전',
-        },
-        user: {
-            name: 'Eden',
-            email: 'hong@example.com',
-            avatar: 'https://invalid-url-that-will-fail.com/image.png',
-        },
-    },
-    parameters: {
-        docs: {
-            description: {
-                story: '아바타 이미지 URL이 잘못되었거나 로드에 실패한 경우 이니셜이 표시됩니다.',
-            },
-        },
-    },
-};
-
-// 커스텀 아바타 크기 예제
-export const WithLargerAvatar: Story = {
-    args: {
-        menuItems: defaultMenuItems,
-        sections: ['Platform', 'Projects'],
-        organization: {
-            name: '샘플 조직',
-            logo: '🏢',
-            subText: '엔터프라이즈 버전',
-        },
-        user: {
-            name: '홍길동',
-            email: 'hong@example.com',
-            avatar: 'https://github.com/shadcn.png',
-            avatarClassName: 'h-10 w-10', // 더 큰 아바타 크기 적용
-        },
-    },
-    parameters: {
-        docs: {
-            description: {
-                story: '사용자 아바타 크기를 더 크게 설정한 예제입니다.',
-            },
-        },
-    },
-};
-
-// 커스텀 아바타 배경색과 크기 조합 예제
-export const WithCustomAvatarStyle: Story = {
-    args: {
-        menuItems: defaultMenuItems,
-        sections: ['Platform', 'Projects'],
-        organization: {
-            name: '샘플 조직',
-            logo: '🏢',
-            subText: '엔터프라이즈 버전',
-        },
-        user: {
-            name: '홍길동',
-            email: 'hong@example.com',
-            avatarClassName: 'h-12 w-12 border-2 border-primary', // 크기와 테두리 스타일 적용
-            avatarBgColor: 'bg-gradient-to-r from-blue-500 to-purple-500', // 그라데이션 배경색 적용
-        },
-    },
-    parameters: {
-        docs: {
-            description: {
-                story: '사용자 아바타에 커스텀 크기와 배경색을 함께 적용한 예제입니다.',
+                story: '트리거 버튼 없이 사이드바만 사용하는 예제입니다.',
             },
         },
     },

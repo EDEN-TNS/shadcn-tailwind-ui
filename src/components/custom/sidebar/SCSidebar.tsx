@@ -12,13 +12,9 @@ import {
     SidebarMenuSub,
     SidebarMenuSubButton,
     SidebarMenuSubItem,
-    SidebarProvider,
     SidebarRail,
-    SidebarTrigger,
-    useSidebar,
 } from '@/components/ui/sidebar';
 
-import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
 import { SCAvatar } from '@/components/custom/avatar/SCAvatar';
@@ -78,9 +74,6 @@ export const SCSidebar = React.memo(
         size = 'default',
         sections,
         collapsible = true,
-        hideToggle = false,
-        triggerIcon,
-        triggerClassName,
     }: SCSidebarProps) => {
         const isActive = React.useCallback(
             (href?: string, items?: { href: string }[]) => {
@@ -141,7 +134,9 @@ export const SCSidebar = React.memo(
                                 {React.createElement(item.icon, {
                                     className: 'h-4 w-4',
                                 })}
-                                <span>{item.label}</span>
+                                <a href={item.href} className={currentPath === item.href ? 'bg-accent' : ''}>
+                                    <span>{item.label}</span>
+                                </a>
                             </SidebarMenuButton>
                         )}
                     </SidebarMenuItem>
@@ -150,101 +145,77 @@ export const SCSidebar = React.memo(
             [isActive, currentPath],
         );
 
-        // 커스텀 트리거 컴포넌트
-        const CustomTrigger = React.useCallback(() => {
-            const { toggleSidebar } = useSidebar();
-            return (
-                <Button
-                    onClick={toggleSidebar}
-                    data-sidebar="trigger"
-                    variant="ghost"
-                    size="icon"
-                    className={cn('h-7 w-7', triggerClassName)}
-                >
-                    {triggerIcon}
-                    <span className="sr-only">Toggle Sidebar</span>
-                </Button>
-            );
-        }, [triggerClassName, triggerIcon]);
-
         return (
-            <SidebarProvider defaultOpen>
-                <Sidebar
-                    collapsible={collapsible ? 'icon' : 'none'}
-                    className={cn('h-screen border-r', SC_SIDEBAR_SIZES[size], className)}
-                >
-                    <SidebarHeader>
+            <Sidebar
+                collapsible={collapsible ? 'icon' : 'none'}
+                className={cn('h-screen border-r', SC_SIDEBAR_SIZES[size], className)}
+            >
+                <SidebarHeader>
+                    <SidebarMenu>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton size="lg">
+                                <div
+                                    className={cn(
+                                        'flex size-8 shrink-0 items-center justify-center rounded-lg text-sidebar-primary-foreground',
+                                        organization?.logoBgColor ? organization.logoBgColor : 'bg-sidebar-primary',
+                                    )}
+                                >
+                                    <div className="flex size-4 items-center justify-center">{organization?.logo}</div>
+                                </div>
+                                <div className="grid flex-1 text-left text-sm leading-tight">
+                                    <span className="truncate font-semibold">{organization?.name}</span>
+                                    {organization?.subText && (
+                                        <span className="truncate text-xs text-muted-foreground">
+                                            {organization?.subText}
+                                        </span>
+                                    )}
+                                </div>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
+                </SidebarHeader>
+
+                <SidebarContent>
+                    <SCScrollArea className="h-full">
+                        {sections ? (
+                            sections.map(section => (
+                                <SidebarGroup key={section}>
+                                    <SidebarGroupLabel>{section}</SidebarGroupLabel>
+                                    <SidebarMenu>
+                                        {menuItems.filter(item => item.section === section).map(renderMenuItem)}
+                                    </SidebarMenu>
+                                </SidebarGroup>
+                            ))
+                        ) : (
+                            <SidebarGroup>
+                                <SidebarMenu>{menuItems.map(renderMenuItem)}</SidebarMenu>
+                            </SidebarGroup>
+                        )}
+                    </SCScrollArea>
+                </SidebarContent>
+
+                <SidebarFooter>
+                    {user && (
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton size="lg">
-                                    <div
-                                        className={cn(
-                                            'flex size-8 shrink-0 items-center justify-center rounded-lg text-sidebar-primary-foreground',
-                                            organization?.logoBgColor ? organization.logoBgColor : 'bg-sidebar-primary',
-                                        )}
-                                    >
-                                        <div className="flex size-4 items-center justify-center">
-                                            {organization?.logo}
-                                        </div>
-                                    </div>
+                                    <SCAvatar
+                                        src={user.avatar}
+                                        alt={user.name}
+                                        className={cn('h-8 w-8', user.avatarClassName)}
+                                        fallbackClassName={user.avatarBgColor}
+                                    />
                                     <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-semibold">{organization?.name}</span>
-                                        {organization?.subText && (
-                                            <span className="truncate text-xs text-muted-foreground">
-                                                {organization?.subText}
-                                            </span>
-                                        )}
+                                        <span className="truncate font-semibold">{user.name}</span>
+                                        <span className="truncate text-xs text-muted-foreground">{user.email}</span>
                                     </div>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                         </SidebarMenu>
-                    </SidebarHeader>
-
-                    <SidebarContent>
-                        <SCScrollArea className="h-full">
-                            {sections ? (
-                                sections.map(section => (
-                                    <SidebarGroup key={section}>
-                                        <SidebarGroupLabel>{section}</SidebarGroupLabel>
-                                        <SidebarMenu>
-                                            {menuItems.filter(item => item.section === section).map(renderMenuItem)}
-                                        </SidebarMenu>
-                                    </SidebarGroup>
-                                ))
-                            ) : (
-                                <SidebarGroup>
-                                    <SidebarMenu>{menuItems.map(renderMenuItem)}</SidebarMenu>
-                                </SidebarGroup>
-                            )}
-                        </SCScrollArea>
-                    </SidebarContent>
-
-                    <SidebarFooter>
-                        {user && (
-                            <SidebarMenu>
-                                <SidebarMenuItem>
-                                    <SidebarMenuButton size="lg">
-                                        <SCAvatar
-                                            src={user.avatar}
-                                            alt={user.name}
-                                            className={cn('h-8 w-8', user.avatarClassName)}
-                                            fallbackClassName={user.avatarBgColor}
-                                        />
-                                        <div className="grid flex-1 text-left text-sm leading-tight">
-                                            <span className="truncate font-semibold">{user.name}</span>
-                                            <span className="truncate text-xs text-muted-foreground">{user.email}</span>
-                                        </div>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            </SidebarMenu>
-                        )}
-                    </SidebarFooter>
-                    <SidebarRail />
-                </Sidebar>
-                {!hideToggle &&
-                    collapsible &&
-                    (triggerIcon ? <CustomTrigger /> : <SidebarTrigger className={triggerClassName} />)}
-            </SidebarProvider>
+                    )}
+                </SidebarFooter>
+                <SidebarRail />
+            </Sidebar>
         );
     },
 );
