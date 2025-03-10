@@ -62,7 +62,17 @@ interface SCSidebarProps {
     hideToggle?: boolean;
     triggerIcon?: React.ReactNode;
     triggerClassName?: string;
+    renderLink?: (href: string, children: React.ReactNode, className?: string) => React.ReactNode;
 }
+
+// 내부 헬퍼 컴포넌트 추가
+const LinkWrapper = ({ href, children, isActive }: { href: string; children: React.ReactNode; isActive?: boolean }) => {
+    return (
+        <a href={href} className={cn('flex w-full items-center text-foreground no-underline', isActive && 'bg-accent')}>
+            {children}
+        </a>
+    );
+};
 
 export const SCSidebar = React.memo(
     ({
@@ -74,6 +84,7 @@ export const SCSidebar = React.memo(
         size = 'default',
         sections,
         collapsible = true,
+        renderLink,
     }: SCSidebarProps) => {
         const isActive = React.useCallback(
             (href?: string, items?: { href: string }[]) => {
@@ -86,63 +97,93 @@ export const SCSidebar = React.memo(
         );
 
         const renderMenuItem = React.useCallback(
-            (item: MenuItem) => (
-                <Collapsible
-                    key={item.label}
-                    asChild
-                    defaultOpen={isActive(item.href, item.items)}
-                    className="group/collapsible"
-                >
-                    <SidebarMenuItem>
-                        {item.items ? (
-                            <>
-                                <CollapsibleTrigger asChild>
-                                    <SidebarMenuButton
-                                        tooltip={item.label}
-                                        className={isActive(item.href, item.items) ? 'bg-accent' : ''}
-                                        aria-expanded={isActive(item.href, item.items)}
-                                    >
-                                        {React.createElement(item.icon, {
-                                            className: 'h-4 w-4',
-                                        })}
-                                        <span>{item.label}</span>
-                                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                    </SidebarMenuButton>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent>
-                                    <SidebarMenuSub>
-                                        {item.items.map(subItem => (
-                                            <SidebarMenuSubItem key={subItem.label}>
-                                                <SidebarMenuSubButton asChild>
-                                                    <a
-                                                        href={subItem.href}
-                                                        className={currentPath === subItem.href ? 'bg-accent' : ''}
-                                                    >
-                                                        <span>{subItem.label}</span>
-                                                    </a>
-                                                </SidebarMenuSubButton>
-                                            </SidebarMenuSubItem>
-                                        ))}
-                                    </SidebarMenuSub>
-                                </CollapsibleContent>
-                            </>
-                        ) : (
-                            <SidebarMenuButton
-                                tooltip={item.label}
-                                aria-current={currentPath === item.href ? 'page' : undefined}
-                            >
-                                {React.createElement(item.icon, {
-                                    className: 'h-4 w-4',
-                                })}
-                                <a href={item.href} className={currentPath === item.href ? 'bg-accent' : ''}>
-                                    <span>{item.label}</span>
-                                </a>
-                            </SidebarMenuButton>
-                        )}
-                    </SidebarMenuItem>
-                </Collapsible>
-            ),
-            [isActive, currentPath],
+            (item: MenuItem) => {
+                const active = isActive(item.href, item.items);
+                return (
+                    <Collapsible key={item.label} asChild defaultOpen={active} className="group/collapsible">
+                        <SidebarMenuItem className={!item.items && currentPath === item.href ? 'bg-accent' : ''}>
+                            {item.items ? (
+                                <>
+                                    <CollapsibleTrigger asChild>
+                                        <SidebarMenuButton
+                                            tooltip={item.label}
+                                            className={active ? 'bg-accent' : ''}
+                                            aria-expanded={active}
+                                        >
+                                            {React.createElement(item.icon, {
+                                                className: 'h-4 w-4',
+                                            })}
+                                            <span>{item.label}</span>
+                                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                        </SidebarMenuButton>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent>
+                                        <SidebarMenuSub>
+                                            {item.items.map(subItem => (
+                                                <SidebarMenuSubItem
+                                                    key={subItem.label}
+                                                    className={currentPath === subItem.href ? 'bg-accent' : ''}
+                                                >
+                                                    <SidebarMenuSubButton asChild>
+                                                        {renderLink ? (
+                                                            // 커스텀 Link 컴포넌트를 렌더링하되, 원본 스타일 속성을 전달
+                                                            React.cloneElement(
+                                                                renderLink(
+                                                                    subItem.href,
+                                                                    <span>{subItem.label}</span>,
+                                                                ) as React.ReactElement,
+                                                                {
+                                                                    className:
+                                                                        'flex w-full items-center text-foreground no-underline',
+                                                                    style: { color: 'inherit', textDecoration: 'none' },
+                                                                },
+                                                            )
+                                                        ) : (
+                                                            <LinkWrapper
+                                                                href={subItem.href}
+                                                                isActive={currentPath === subItem.href}
+                                                            >
+                                                                <span>{subItem.label}</span>
+                                                            </LinkWrapper>
+                                                        )}
+                                                    </SidebarMenuSubButton>
+                                                </SidebarMenuSubItem>
+                                            ))}
+                                        </SidebarMenuSub>
+                                    </CollapsibleContent>
+                                </>
+                            ) : (
+                                <SidebarMenuButton
+                                    tooltip={item.label}
+                                    aria-current={currentPath === item.href ? 'page' : undefined}
+                                >
+                                    {React.createElement(item.icon, {
+                                        className: 'h-4 w-4',
+                                    })}
+                                    {renderLink ? (
+                                        // 커스텀 Link 컴포넌트를 렌더링하되, 원본 스타일 속성을 전달
+                                        React.cloneElement(
+                                            renderLink(
+                                                item.href ?? '',
+                                                <span>{item.label}</span>,
+                                            ) as React.ReactElement,
+                                            {
+                                                className: 'flex w-full items-center text-foreground no-underline',
+                                                style: { color: 'inherit', textDecoration: 'none' },
+                                            },
+                                        )
+                                    ) : (
+                                        <LinkWrapper href={item.href ?? '#'} isActive={currentPath === item.href}>
+                                            <span>{item.label}</span>
+                                        </LinkWrapper>
+                                    )}
+                                </SidebarMenuButton>
+                            )}
+                        </SidebarMenuItem>
+                    </Collapsible>
+                );
+            },
+            [isActive, currentPath, renderLink],
         );
 
         return (

@@ -1,6 +1,8 @@
 import { Folder, Home, Menu, Settings, Users } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
 
+import { Link } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { SCSidebar } from '@/components/custom/sidebar/SCSidebar';
 import { SCSidebarProvider } from '@/components/custom/sidebar/SCSidebarProvider';
 import { SCSidebarTrigger } from '@/components/custom/sidebar/SCSidebarTrigger';
@@ -28,6 +30,7 @@ const meta: Meta<typeof SCSidebar> = {
 - 조직 정보 표시
 - 반응형 디자인 지원
 - 독립적인 토글 트리거 컴포넌트
+- 커스텀 링크 렌더링 지원 (React Router, Next.js 등)
 
 ## 컴포넌트 구조
 - \`SCSidebarProvider\`: 사이드바의 상태를 관리하는 컨텍스트 제공자
@@ -41,6 +44,7 @@ import { SCSidebarProvider } from '@/components/custom/sidebar/SCSidebarProvider
 import { SCSidebar } from '@/components/custom/sidebar/SCSidebar';
 import { SCSidebarTrigger } from '@/components/custom/sidebar/SCSidebarTrigger';
 import { Home, Menu, Settings, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const menuItems = [
   {
@@ -84,6 +88,9 @@ function MyLayout() {
             avatar: 'https://github.com/shadcn.png',
           }}
           currentPath="/settings/security"
+          renderLink={(href, children) => (
+            <Link to={href}>{children}</Link>
+          )}
         />
         <main className="relative flex-1">
           <SCSidebarTrigger
@@ -104,7 +111,9 @@ function MyLayout() {
     decorators: [
         Story => (
             <SCSidebarProvider>
-                <Story />
+                <MemoryRouter>
+                    <Story />
+                </MemoryRouter>
             </SCSidebarProvider>
         ),
     ],
@@ -166,6 +175,8 @@ export const WithSections: Story = {
             email: 'hong@example.com',
             avatar: 'https://github.com/shadcn.png',
         },
+        currentPath: '/',
+        renderLink: (href, children) => <Link to={href}>{children}</Link>,
     },
 };
 
@@ -498,6 +509,7 @@ export const TopRightTrigger: Story = {
     ),
     args: {
         ...WithSections.args,
+        renderLink: (href, children) => <Link to={href}>{children}</Link>,
     },
     parameters: {
         docs: {
@@ -522,6 +534,7 @@ export const BottomRightTrigger: Story = {
     ),
     args: {
         ...WithSections.args,
+        renderLink: (href, children) => <Link to={href}>{children}</Link>,
     },
     parameters: {
         docs: {
@@ -546,6 +559,95 @@ export const WithoutTrigger: Story = {
         docs: {
             description: {
                 story: '트리거 버튼 없이 사이드바만 사용하는 예제입니다.',
+            },
+        },
+    },
+};
+
+// 모의 Link 컴포넌트 생성
+const MockLink = ({ to, children, ...props }: { to: string; children: React.ReactNode; [key: string]: any }) => (
+    <a
+        href={to}
+        onClick={e => {
+            e.preventDefault();
+            console.log(`Navigate to: ${to}`);
+        }}
+        {...props}
+    >
+        {children}
+    </a>
+);
+
+// React Router Link를 사용하는 예제 추가
+export const WithReactRouterLink: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+                <div className="p-4">
+                    <h1 className="text-xl font-bold">React Router Link 예제</h1>
+                    <p className="mt-2">
+                        이 예제에서는 <code>renderLink</code> prop을 사용하여 React Router의 Link 컴포넌트를 사용하는
+                        방법을 보여줍니다. 실제 애플리케이션에서는 React Router의 Link 컴포넌트를 사용하여 페이지
+                        새로고침 없이 라우팅할 수 있습니다.
+                    </p>
+                </div>
+            </main>
+        </div>
+    ),
+    args: {
+        ...WithSections.args,
+        renderLink: (href, children) => <MockLink to={href}>{children}</MockLink>,
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: `
+## renderLink 사용 이유
+
+\`renderLink\` prop은 사이드바의 링크 렌더링 방식을 커스터마이징할 수 있게 해줍니다. 이는 다음과 같은 이유로 중요합니다:
+
+1. **SPA 라우팅 지원**: React Router, Next.js, Gatsby 등의 프레임워크에서 페이지 새로고침 없이 라우팅하려면 각 프레임워크의 Link 컴포넌트를 사용해야 합니다.
+2. **컴포넌트 재사용성**: 특정 라우팅 라이브러리에 의존하지 않고 다양한 환경에서 재사용할 수 있습니다.
+3. **사용자 경험 향상**: 페이지 새로고침 없이 라우팅하면 더 부드러운 사용자 경험을 제공합니다.
+
+## 실제 React Router 사용 예시
+
+\`\`\`jsx
+import { Link } from 'react-router-dom';
+import { SCSidebar } from '@/components/custom/sidebar/SCSidebar';
+
+function MySidebar() {
+  return (
+    <SCSidebar
+      // ... 다른 props ...
+      renderLink={(href, children) => (
+        <Link to={href}>{children}</Link>
+      )}
+    />
+  );
+}
+\`\`\`
+
+## Next.js 사용 예시
+
+\`\`\`jsx
+import Link from 'next/link';
+import { SCSidebar } from '@/components/custom/sidebar/SCSidebar';
+
+function MySidebar() {
+  return (
+    <SCSidebar
+      // ... 다른 props ...
+      renderLink={(href, children) => (
+        <Link href={href}>{children}</Link>
+      )}
+    />
+  );
+}
+\`\`\`
+`,
             },
         },
     },
