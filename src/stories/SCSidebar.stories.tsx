@@ -1,4 +1,4 @@
-import { Folder, Home, Menu, Settings, Users } from 'lucide-react';
+import { Folder, Home, LogOut, Menu, Settings, User, Users } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Link } from 'react-router-dom';
@@ -103,6 +103,22 @@ function MyLayout() {
     </SCSidebarProvider>
   );
 }
+
+# 사용자 프로필 영역 커스터마이징
+
+사용자 프로필 영역은 다음과 같은 방식으로 커스터마이징할 수 있습니다:
+
+1. **드롭다운 메뉴 사용**
+   - \`useDropdownMenu\` prop을 true로 설정하여 드롭다운 메뉴를 활성화합니다.
+   - \`onLogout\`, \`onProfileClick\`, \`onSettingsClick\` 핸들러를 제공하여 각 메뉴 항목의 동작을 정의합니다.
+
+2. **클릭 가능한 프로필**
+   - \`onUserClick\` 핸들러를 제공하여 프로필 영역 클릭 시의 동작을 정의합니다.
+
+3. **기본 프로필**
+   - 아무 핸들러도 제공하지 않으면 기본 상태로 표시됩니다.
+
+자세한 예제는 아래 스토리들을 참고하세요.
 \`\`\`
 `,
             },
@@ -646,6 +662,132 @@ function MySidebar() {
     />
   );
 }
+\`\`\`
+`,
+            },
+        },
+    },
+};
+
+const defaultArgs = {
+    ...WithSections.args,
+    renderLink: (href: string, children: React.ReactNode) => <Link to={href}>{children}</Link>,
+};
+
+// Dropdown 메뉴가 있는 사이드바
+export const WithDropdownMenu: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
+    args: {
+        ...defaultArgs,
+        useDropdownMenu: true,
+        onLogout: () => {
+            alert('로그아웃 클릭');
+        },
+        onProfileClick: () => {
+            alert('프로필 클릭');
+        },
+        onSettingsClick: () => {
+            alert('설정 클릭');
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: `
+사용자 프로필 영역에 드롭다운 메뉴를 추가한 예제입니다.
+드롭다운 메뉴에는 프로필, 설정, 로그아웃 등의 메뉴 항목이 포함됩니다.
+
+\`\`\`tsx
+<SCSidebar
+    useDropdownMenu
+    onLogout={() => {
+        console.log('로그아웃');
+    }}
+    onProfileClick={() => {
+        console.log('프로필');
+    }}
+    onSettingsClick={() => {
+        console.log('설정');
+    }}
+    // ... 기타 props
+/>
+\`\`\`
+`,
+            },
+        },
+    },
+};
+
+// 클릭 가능한 사용자 프로필 (Dropdown 없음)
+export const WithClickableUserProfile: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
+    args: {
+        ...WithSections.args,
+        useDropdownMenu: false,
+        onUserClick: () => {
+            alert('사용자 프로필 클릭');
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: `
+드롭다운 메뉴 없이 클릭 가능한 사용자 프로필 영역을 가진 예제입니다.
+사용자 프로필 영역 클릭 시 \`onUserClick\` 핸들러가 호출됩니다.
+
+\`\`\`tsx
+<SCSidebar
+    onUserClick={() => {
+        console.log('사용자 프로필 클릭');
+    }}
+    // ... 기타 props
+/>
+\`\`\`
+`,
+            },
+        },
+    },
+};
+
+// 기본 사용자 프로필 (클릭 불가)
+export const WithDefaultUserProfile: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+            </main>
+        </div>
+    ),
+    args: {
+        ...defaultArgs,
+        useDropdownMenu: false,
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: `
+기본 사용자 프로필 영역을 가진 예제입니다.
+클릭이나 드롭다운 메뉴가 없는 기본 상태입니다.
+
+\`\`\`tsx
+<SCSidebar
+    // ... 기타 props
+/>
 \`\`\`
 `,
             },

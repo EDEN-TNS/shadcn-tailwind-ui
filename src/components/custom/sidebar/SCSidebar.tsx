@@ -1,5 +1,14 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { LogOut, Settings, User } from 'lucide-react';
+import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
@@ -63,6 +72,11 @@ interface SCSidebarProps {
     triggerIcon?: React.ReactNode;
     triggerClassName?: string;
     renderLink?: (href: string, children: React.ReactNode, className?: string) => React.ReactNode;
+    onLogout?: () => void;
+    onProfileClick?: () => void;
+    onSettingsClick?: () => void;
+    useDropdownMenu?: boolean;
+    onUserClick?: () => void;
 }
 
 // 내부 헬퍼 컴포넌트 추가
@@ -85,6 +99,11 @@ export const SCSidebar = React.memo(
         sections,
         collapsible = true,
         renderLink,
+        onLogout,
+        onProfileClick,
+        onSettingsClick,
+        useDropdownMenu = false,
+        onUserClick,
     }: SCSidebarProps) => {
         const isActive = React.useCallback(
             (href?: string, items?: { href: string }[]) => {
@@ -239,18 +258,62 @@ export const SCSidebar = React.memo(
                     {user && (
                         <SidebarMenu>
                             <SidebarMenuItem>
-                                <SidebarMenuButton size="lg">
-                                    <SCAvatar
-                                        src={user.avatar}
-                                        alt={user.name}
-                                        className={cn('h-8 w-8', user.avatarClassName)}
-                                        fallbackClassName={user.avatarBgColor}
-                                    />
-                                    <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-semibold">{user.name}</span>
-                                        <span className="truncate text-xs text-muted-foreground">{user.email}</span>
-                                    </div>
-                                </SidebarMenuButton>
+                                {useDropdownMenu ? (
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <SidebarMenuButton size="lg">
+                                                <SCAvatar
+                                                    src={user.avatar}
+                                                    alt={user.name}
+                                                    className={cn('h-8 w-8', user.avatarClassName)}
+                                                    fallbackClassName={user.avatarBgColor}
+                                                />
+                                                <div className="grid flex-1 text-left text-sm leading-tight">
+                                                    <span className="truncate font-semibold">{user.name}</span>
+                                                    <span className="truncate text-xs text-muted-foreground">
+                                                        {user.email}
+                                                    </span>
+                                                </div>
+                                            </SidebarMenuButton>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent side="top" className="w-56">
+                                            {onProfileClick && (
+                                                <DropdownMenuItem onClick={onProfileClick}>
+                                                    <User className="mr-2 h-4 w-4" />
+                                                    프로필
+                                                </DropdownMenuItem>
+                                            )}
+                                            {onSettingsClick && (
+                                                <DropdownMenuItem onClick={onSettingsClick}>
+                                                    <Settings className="mr-2 h-4 w-4" />
+                                                    설정
+                                                </DropdownMenuItem>
+                                            )}
+                                            {onLogout && (
+                                                <>
+                                                    {(onProfileClick || onSettingsClick) && <DropdownMenuSeparator />}
+                                                    <DropdownMenuItem onClick={onLogout}>
+                                                        <LogOut className="mr-2 h-4 w-4" />
+                                                        로그아웃
+                                                    </DropdownMenuItem>
+                                                </>
+                                            )}
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                ) : (
+                                    <SidebarMenuButton size="lg" onClick={onUserClick}>
+                                        <SCAvatar
+                                            src={user.avatar}
+                                            alt={user.name}
+                                            className={cn('h-8 w-8', user.avatarClassName)}
+                                            fallbackClassName={user.avatarBgColor}
+                                        />
+                                        <div className="grid flex-1 text-left text-sm leading-tight">
+                                            <span className="truncate font-semibold">{user.name}</span>
+                                            <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+                                        </div>
+                                    </SidebarMenuButton>
+                                )}
                             </SidebarMenuItem>
                         </SidebarMenu>
                     )}
