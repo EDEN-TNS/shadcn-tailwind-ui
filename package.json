@@ -1,6 +1,6 @@
 {
     "name": "@edentns/shadcn-tailwind-ui",
-    "version": "0.0.0-beta-2-20250311",
+    "version": "0.0.0-beta-5-20250311",
     "license": "MIT",
     "type": "module",
     "main": "./dist/cjs/index.js",
@@ -16,7 +16,9 @@
     },
     "files": [
         "dist",
-        "dist/types"
+        "dist/types",
+        "README.md",
+        "LICENSE"
     ],
     "homepage": "https://main--67beae8d6c317a64d5e86707.chromatic.com/",
     "publishConfig": {
