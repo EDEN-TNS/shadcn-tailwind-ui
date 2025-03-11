@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { ChevronDown } from 'lucide-react';
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
 import { cn } from '@/lib/utils';
 
 // 상수 정의
@@ -32,6 +33,7 @@ interface SCAccordionItem {
  * @property {string | string[]} [defaultValue] - 기본 선택값
  * @property {string} [className] - 추가 스타일 클래스
  * @property {keyof typeof SC_ACCORDION_SIZES} [size='default'] - 아코디언 크기
+ * @property {boolean} [collapsible=true] - 모든 항목을 닫을 수 있는지 여부
  */
 interface SCAccordionProps<T extends 'single' | 'multiple' = 'single'> {
     items: SCAccordionItem[];
@@ -40,6 +42,7 @@ interface SCAccordionProps<T extends 'single' | 'multiple' = 'single'> {
     className?: string;
     customClassName?: string;
     size?: keyof typeof SC_ACCORDION_SIZES;
+    collapsible?: boolean;
 }
 
 export type SCAccordionType = 'single' | 'multiple';
@@ -55,72 +58,58 @@ export type SCAccordionComponent = (<T extends SCAccordionType = 'single'>(
  * @param type - 단일/다중 선택 여부
  * @param size - 아코디언 크기
  */
-const AccordionBase = <T extends SCAccordionType>({
+const SCAccordionBase = <T extends SCAccordionType>({
     items,
     type = 'single' as T,
     defaultValue,
     className,
     customClassName,
     size = 'default',
+    collapsible = true,
 }: SCAccordionProps<T>) => {
     const sizeClasses = React.useMemo(
         () => ({
-            default: 'py-4 sm:py-6',
-            sm: 'py-2 sm:py-4',
-            lg: 'py-6 sm:py-8',
+            default: 'py-4',
+            sm: 'py-2',
+            lg: 'py-6',
         }),
         [],
     );
 
-    const triggerClasses = cn(
-        'flex flex-1 items-center justify-between text-sm font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180',
-        sizeClasses[size],
-    );
+    const triggerClasses = cn(sizeClasses[size], size === 'sm' ? 'text-sm' : 'text-base');
 
-    const contentClasses = cn(
-        'data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden',
-        size === 'sm' ? 'text-xs' : 'text-sm',
-    );
+    const contentClasses = cn(size === 'sm' ? 'text-sm' : 'text-base');
 
     return type === 'single' ? (
         <Accordion
             type="single"
             defaultValue={defaultValue as string}
+            collapsible={collapsible}
             className={cn('w-full', customClassName, className)}
         >
             {items.map(item => (
                 <AccordionItem key={item.id} value={item.id}>
-                    <AccordionTrigger className={triggerClasses} aria-label={`${item.title} 토글`}>
-                        {item.title}
-                        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
-                    </AccordionTrigger>
-                    <AccordionContent className={contentClasses}>
-                        <div className="pb-4 pt-0">{item.content}</div>
-                    </AccordionContent>
+                    <AccordionTrigger className={triggerClasses}>{item.title}</AccordionTrigger>
+                    <AccordionContent className={contentClasses}>{item.content}</AccordionContent>
                 </AccordionItem>
             ))}
         </Accordion>
     ) : (
         <Accordion
             type="multiple"
-            defaultValue={defaultValue as unknown as string[]}
+            defaultValue={defaultValue as string[]}
             className={cn('w-full', customClassName, className)}
         >
             {items.map(item => (
                 <AccordionItem key={item.id} value={item.id}>
-                    <AccordionTrigger className={triggerClasses} aria-label={`${item.title} 토글`}>
-                        {item.title}
-                        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
-                    </AccordionTrigger>
-                    <AccordionContent className={contentClasses}>
-                        <div className="pb-4 pt-0">{item.content}</div>
-                    </AccordionContent>
+                    <AccordionTrigger className={triggerClasses}>{item.title}</AccordionTrigger>
+                    <AccordionContent className={contentClasses}>{item.content}</AccordionContent>
                 </AccordionItem>
             ))}
         </Accordion>
     );
 };
 
-export const SCAccordion = React.memo(AccordionBase) as SCAccordionComponent;
+export const SCAccordion = React.memo(SCAccordionBase) as SCAccordionComponent;
 
 SCAccordion.displayName = 'SCAccordion';

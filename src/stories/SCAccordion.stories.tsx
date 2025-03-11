@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { SCAccordion, SCAccordionComponent } from '@/components/custom/accordion/SCAccordion';
+
+import { SCAccordion } from '@/components/custom/accordion/SCAccordion';
 
 const meta: Meta<typeof SCAccordion> = {
     title: 'Components/SCAccordion',
@@ -88,6 +89,15 @@ const defaultItems = [
 export const Default: Story = {
     args: {
         items: defaultItems,
+        collapsible: true,
+    },
+};
+
+// collapsible이 false인 경우 추가
+export const NonCollapsible: Story = {
+    args: {
+        items: defaultItems,
+        collapsible: false,
     },
 };
 
