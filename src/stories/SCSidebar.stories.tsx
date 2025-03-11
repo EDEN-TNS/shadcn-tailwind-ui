@@ -1,4 +1,4 @@
-import { Folder, Home, LogOut, Menu, Settings, User, Users } from 'lucide-react';
+import { Folder, Home, Menu, Settings, Users } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Link } from 'react-router-dom';
