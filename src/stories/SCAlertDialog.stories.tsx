@@ -85,8 +85,8 @@ export const CustomButtons: Story = {
         description: '다양한 버튼 스타일을 적용할 수 있습니다.',
         confirmText: '확인',
         cancelText: '취소',
-        confirmVariant: 'primary',
-        cancelVariant: 'ghost',
+        confirmVariant: 'destructive',
+        cancelVariant: 'outline',
     },
 };
 

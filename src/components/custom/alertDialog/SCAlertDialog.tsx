@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,7 +11,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { SCButton } from '../button/SCButton';
+
+import { SCButton } from '@/components/custom/button/SCButton';
 
 type ButtonVariant = 'default' | 'primary' | 'destructive' | 'secondary' | 'outline' | 'ghost' | 'link';
 
