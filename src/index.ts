@@ -22,3 +22,4 @@ export { SCThemeToggle } from '@/components/custom/theme/SCThemeToggle';
 export { SCCard } from '@/components/custom/card/SCCard';
 export { SCBreadcrumb } from '@/components/custom/breadcrumb/SCBreadcrumb';
 export { SCDatePicker } from '@/components/custom/datePicker/SCDatePicker';
+export { SCTooltip } from '@/components/custom/tooltip/SCTooltip';
