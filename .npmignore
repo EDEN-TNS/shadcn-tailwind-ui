@@ -8,6 +8,7 @@ stories/
 .prettierrc*
 .editorconfig
 tsconfig.json
+tsconfig.*.json
 vite.config.ts
 postcss.config.js
 .gitignore
