@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     dts({ 
       insertTypesEntry: true,
-      outDir: ['dist/types']
+      exclude: ['**/*.stories.tsx', '**/*.stories.ts', '**/stories/**', '.storybook/**']
     }),
     cssInjectedByJs()  // CSS를 JS에 포함시키는 플러그인 추가
   ],
@@ -28,7 +28,10 @@ export default defineConfig({
           react: 'React',
           'react-dom': 'ReactDOM'
         }
-      }
+      },
+      input: {
+        index: resolve(__dirname, 'src/index.ts')
+      },
     }
   },
   resolve: {
