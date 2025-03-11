@@ -1,6 +1,6 @@
 {
     "name": "@edentns/shadcn-tailwind-ui",
-    "version": "0.0.0-beta-5-20250311",
+    "version": "0.0.0-beta-6-20250311",
     "license": "MIT",
     "type": "module",
     "main": "./dist/cjs/index.js",
@@ -29,7 +29,7 @@
         "url": "https://github.com/EDEN-TNS/shadcn-tailwind-ui"
     },
     "scripts": {
-        "build": "vite build",
+        "build": "tsc -p tsconfig.build.json && vite build",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
         "chromatic": "npx chromatic --project-token=chpt_111db65d905d089"
