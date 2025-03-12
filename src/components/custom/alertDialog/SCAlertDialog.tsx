@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -12,6 +11,7 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
+import { SCAlertDialogAction } from '@/components/custom/alertDialog/SCAlertDialogAction';
 import { SCButton } from '@/components/custom/button/SCButton';
 
 type ButtonVariant = 'default' | 'primary' | 'destructive' | 'secondary' | 'outline' | 'ghost' | 'link';
@@ -33,11 +33,11 @@ interface SCAlertDialogProps {
     description: string;
     cancelText?: string;
     confirmText?: string;
-    onConfirm?: () => void | Promise<void>;
     variant?: 'default' | 'destructive';
     confirmVariant?: ButtonVariant;
     cancelVariant?: ButtonVariant;
     className?: string;
+    onConfirm?: () => void | Promise<void>;
 }
 
 /**
@@ -50,11 +50,11 @@ export const SCAlertDialog = React.memo(
         description,
         cancelText = '취소',
         confirmText = '확인',
-        onConfirm,
         variant = 'default',
         className,
         confirmVariant = variant,
         cancelVariant = 'outline',
+        onConfirm,
     }: SCAlertDialogProps) => {
         const [isLoading, setIsLoading] = React.useState(false);
 
@@ -82,11 +82,9 @@ export const SCAlertDialog = React.memo(
                                 {cancelText}
                             </SCButton>
                         </AlertDialogCancel>
-                        <AlertDialogAction asChild>
-                            <SCButton variant={confirmVariant} onClick={handleConfirm} isLoading={isLoading}>
-                                {confirmText}
-                            </SCButton>
-                        </AlertDialogAction>
+                        <SCAlertDialogAction variant={confirmVariant} onClick={handleConfirm} isLoading={isLoading}>
+                            {confirmText}
+                        </SCAlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
