@@ -1,6 +1,6 @@
 {
     "name": "@edentns/shadcn-tailwind-ui",
-    "version": "0.0.0-beta-2-20250312",
+    "version": "0.0.0-beta-3-20250312",
     "license": "MIT",
     "type": "module",
     "main": "./dist/cjs/index.js",
