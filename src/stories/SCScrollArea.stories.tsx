@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { SCButton } from '@/components/custom/button/SCButton';
 import { SCScrollArea } from '@/components/custom/scrollArea/SCScrollArea';
-import { ThemeProvider } from '@/components/custom/theme/ThemeContext';
 
 const meta: Meta<typeof SCScrollArea> = {
     title: 'Components/SCScrollArea',
@@ -33,11 +32,9 @@ const meta: Meta<typeof SCScrollArea> = {
     decorators: [
         Story => (
             <div className="sb-unstyled">
-                <ThemeProvider>
-                    <div className="bg-background p-6 text-foreground">
-                        <Story />
-                    </div>
-                </ThemeProvider>
+                <div className="bg-background p-6 text-foreground">
+                    <Story />
+                </div>
             </div>
         ),
     ],

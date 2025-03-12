@@ -1,7 +1,7 @@
 import { Moon, Sun } from 'lucide-react';
 
 import { SCButton } from '@/components/custom/button/SCButton';
-import { useTheme } from '@/components/custom/theme/ThemeContext';
+import { useTheme } from '@/components/custom/theme/SCThemeContext';
 
 interface SCThemeToggleProps {
     className?: string;

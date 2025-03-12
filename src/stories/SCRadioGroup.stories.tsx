@@ -4,7 +4,6 @@ import { SCButton } from '@/components/custom/button/SCButton';
 import { SCCard } from '@/components/custom/card/SCCard';
 import { SCLabel } from '@/components/custom/label/SCLabel';
 import { SCRadioGroup } from '@/components/custom/radioGroup/SCRadioGroup';
-import { ThemeProvider } from '@/components/custom/theme/ThemeContext';
 
 const meta: Meta<typeof SCRadioGroup> = {
     title: 'Components/SCRadioGroup',
@@ -81,11 +80,9 @@ const options = [
     decorators: [
         Story => (
             <div className="sb-unstyled">
-                <ThemeProvider>
-                    <div className="bg-background p-6 text-foreground">
-                        <Story />
-                    </div>
-                </ThemeProvider>
+                <div className="bg-background p-6 text-foreground">
+                    <Story />
+                </div>
             </div>
         ),
     ],
@@ -95,6 +92,13 @@ export default meta;
 type Story = StoryObj<typeof SCRadioGroup>;
 
 export const Docs: Story = {
+    args: {
+        defaultValue: 'option-one',
+        options: [
+            { value: 'option-one', label: '옵션 1' },
+            { value: 'option-two', label: '옵션 2' },
+        ],
+    },
     parameters: {
         controls: { hideNoControlsWarning: true },
     },

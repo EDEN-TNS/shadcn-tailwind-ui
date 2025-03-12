@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { SCButton } from '@/components/custom/button/SCButton';
 import { SCCard } from '@/components/custom/card/SCCard';
+import { SCThemeProvider } from '@/components/custom/theme/SCThemeContext';
 import { SCThemeToggle } from '@/components/custom/theme/SCThemeToggle';
-import { ThemeProvider } from '@/components/custom/theme/ThemeContext';
 
 const meta: Meta<typeof SCThemeToggle> = {
     title: 'Theme/SCThemeToggle',
@@ -28,23 +28,22 @@ const meta: Meta<typeof SCThemeToggle> = {
 ## 사용법
 
 \`\`\`jsx
-import { SCThemeToggle } from '@edentns/shadcn-tailwind-ui';
-import { ThemeProvider } from '@edentns/shadcn-tailwind-ui';
+import { SCThemeToggle, SCThemeProvider } from '@edentns/shadcn-tailwind-ui';
 
-// ThemeProvider로 애플리케이션 래핑
-<ThemeProvider>
+// SCThemeProvider로 애플리케이션 래핑
+<SCThemeProvider>
   <YourApp>
     {/* 네비게이션 바나 사이드바에 배치 */}
     <SCThemeToggle />
   </YourApp>
-</ThemeProvider>
+</SCThemeProvider>
 
 // 커스텀 스타일 적용
 <SCThemeToggle className="border border-border rounded-full p-2" />
 \`\`\`
 
 ## 주의사항
-- 반드시 \`ThemeProvider\` 내부에서 사용해야 합니다.
+- 반드시 \`SCThemeProvider\` 내부에서 사용해야 합니다.
 - 테마 변경은 전체 애플리케이션에 적용됩니다.
 `,
             },
@@ -53,11 +52,11 @@ import { ThemeProvider } from '@edentns/shadcn-tailwind-ui';
     decorators: [
         Story => (
             <div className="sb-unstyled">
-                <ThemeProvider>
+                <SCThemeProvider>
                     <SCCard className="flex min-h-[200px] items-center justify-center p-6">
                         <Story />
                     </SCCard>
-                </ThemeProvider>
+                </SCThemeProvider>
             </div>
         ),
     ],

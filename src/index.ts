@@ -19,6 +19,7 @@ export { SCScrollArea } from '@/components/custom/scrollArea/SCScrollArea';
 export { SCSelect } from '@/components/custom/select/SCSelect';
 export { SCTabs } from '@/components/custom/tabs/SCTabs';
 export { SCThemeToggle } from '@/components/custom/theme/SCThemeToggle';
+export { SCThemeProvider } from '@/components/custom/theme/SCThemeContext';
 export { SCCard } from '@/components/custom/card/SCCard';
 export { SCBreadcrumb } from '@/components/custom/breadcrumb/SCBreadcrumb';
 export { SCDatePicker } from '@/components/custom/datePicker/SCDatePicker';

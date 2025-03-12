@@ -15,7 +15,7 @@ interface ThemeProviderProps {
     children: React.ReactNode;
 }
 
-export const ThemeProvider = ({ children, defaultTheme = 'system', storageKey = 'ui-theme' }: ThemeProviderProps) => {
+export const SCThemeProvider = ({ children, defaultTheme = 'system', storageKey = 'ui-theme' }: ThemeProviderProps) => {
     const [theme, setTheme] = useState<Theme>(() => {
         const storedTheme = typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
         return (storedTheme as Theme) || defaultTheme;
