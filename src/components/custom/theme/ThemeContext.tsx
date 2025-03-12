@@ -15,7 +15,7 @@ interface ThemeProviderProps {
     children: React.ReactNode;
 }
 
-export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 'ui-theme' }: ThemeProviderProps) {
+export const ThemeProvider = ({ children, defaultTheme = 'system', storageKey = 'ui-theme' }: ThemeProviderProps) => {
     const [theme, setTheme] = useState<Theme>(() => {
         const storedTheme = typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
         return (storedTheme as Theme) || defaultTheme;
@@ -52,12 +52,12 @@ export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 
     }, [theme, storageKey]);
 
     return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
-}
+};
 
-export function useTheme() {
+export const useTheme = () => {
     const context = useContext(ThemeContext);
     if (context === undefined) {
         throw new Error('useTheme must be used within a ThemeProvider');
     }
     return context;
-}
+};

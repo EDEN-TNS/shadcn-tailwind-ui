@@ -76,7 +76,7 @@ export interface SCDatePickerProps {
     onOpenChange?: (open: boolean) => void;
 }
 
-export function SCDatePicker({
+export const SCDatePicker = ({
     date,
     dateRange,
     onDateChange,
@@ -91,7 +91,7 @@ export function SCDatePicker({
     disabledDays,
     open,
     onOpenChange,
-}: SCDatePickerProps) {
+}: SCDatePickerProps) => {
     // 내부 상태 관리
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(date);
     const [selectedRange, setSelectedRange] = React.useState<DateRange | undefined>(dateRange);
@@ -309,4 +309,4 @@ export function SCDatePicker({
             </Popover>
         </div>
     );
-}
+};

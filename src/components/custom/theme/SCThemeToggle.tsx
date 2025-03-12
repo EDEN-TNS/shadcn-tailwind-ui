@@ -7,7 +7,7 @@ interface SCThemeToggleProps {
     className?: string;
 }
 
-export function SCThemeToggle({ className }: SCThemeToggleProps) {
+export const SCThemeToggle = ({ className }: SCThemeToggleProps) => {
     const { theme, setTheme } = useTheme();
 
     return (
@@ -22,4 +22,4 @@ export function SCThemeToggle({ className }: SCThemeToggleProps) {
             <span className="sr-only">테마 전환</span>
         </SCButton>
     );
-}
+};
