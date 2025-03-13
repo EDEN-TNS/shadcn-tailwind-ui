@@ -285,6 +285,7 @@ export const SCDatePicker = ({
                             'w-[300px]',
                             'justify-start text-left font-normal',
                             !selectedRange?.from && 'text-muted-foreground',
+                            className,
                         )}
                         disabled={disabled}
                     >
