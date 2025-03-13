@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { addDays, format } from 'date-fns';
+import { addDays, differenceInDays, format } from 'date-fns';
 import { enUS, ko } from 'date-fns/locale';
 
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,12 @@ const dateFormats = {
     en: 'PPP',
 };
 
+// 범위 날짜 형식 (언어별)
+const rangeDateFormats = {
+    ko: 'yyyy년 MM월 dd일',
+    en: 'LLL dd, y',
+};
+
 // 언어별 텍스트
 const translations = {
     ko: {
@@ -34,6 +40,7 @@ const translations = {
         tomorrow: '내일',
         inThreeDays: '3일 후',
         inAWeek: '일주일 후',
+        maxRangeError: '최대 선택 가능한 기간은 {0}일입니다.',
     },
     en: {
         placeholder: 'Pick a date',
@@ -42,6 +49,7 @@ const translations = {
         tomorrow: 'Tomorrow',
         inThreeDays: 'In 3 days',
         inAWeek: 'In a week',
+        maxRangeError: 'Maximum allowed range is {0} days.',
     },
 };
 
@@ -74,6 +82,14 @@ export interface SCDatePickerProps {
     open?: boolean;
     /** 팝오버 상태 변경 핸들러 */
     onOpenChange?: (open: boolean) => void;
+    /** 커스텀 날짜 형식 (단일 날짜) */
+    dateFormat?: string;
+    /** 커스텀 날짜 형식 (범위) */
+    rangeDateFormat?: string;
+    /** 최대 선택 가능한 날짜 범위 (일 수) */
+    maxDateRange?: number;
+    /** 최대 날짜 범위 초과 시 콜백 */
+    onMaxRangeExceeded?: (days: number, maxAllowed: number, errorMessage: string) => void;
 }
 
 export const SCDatePicker = ({
@@ -91,17 +107,23 @@ export const SCDatePicker = ({
     disabledDays,
     open,
     onOpenChange,
+    dateFormat,
+    rangeDateFormat,
+    maxDateRange,
+    onMaxRangeExceeded,
 }: SCDatePickerProps) => {
     // 내부 상태 관리
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(date);
     const [selectedRange, setSelectedRange] = React.useState<DateRange | undefined>(dateRange);
     const [isOpen, setIsOpen] = React.useState<boolean>(open || false);
+    const [rangeError, setRangeError] = React.useState<boolean>(false);
 
     // 언어별 텍스트
     const currentTexts = translations[locale];
 
     // 날짜 형식
-    const currentDateFormat = dateFormats[locale];
+    const currentDateFormat = dateFormat || dateFormats[locale];
+    const currentRangeDateFormat = rangeDateFormat || rangeDateFormats[locale];
 
     // 외부 상태와 동기화
     React.useEffect(() => {
@@ -137,8 +159,34 @@ export const SCDatePicker = ({
         }
     };
 
-    // 날짜 선택 핸들러 (날짜 범위)
+    // 날짜 범위 선택 핸들러 (날짜 범위)
     const handleSelectRange = (range: DateRange | undefined) => {
+        // 최대 날짜 범위 검사
+        if (range?.from && range?.to && maxDateRange) {
+            const days = differenceInDays(range.to, range.from) + 1;
+
+            if (days > maxDateRange) {
+                // 최대 범위 초과 시 에러 상태 설정
+                setRangeError(true);
+
+                // 에러 메시지 생성
+                const errorMessage = currentTexts.maxRangeError.replace('{0}', maxDateRange.toString());
+
+                // 콜백 호출 (에러 메시지 포함)
+                onMaxRangeExceeded?.(days, maxDateRange, errorMessage);
+
+                // 범위 선택 취소 (from 날짜만 유지)
+                const newRange = { from: range.from, to: undefined };
+                setSelectedRange(newRange);
+                onDateRangeChange?.(newRange);
+                return;
+            }
+        }
+
+        // 에러 상태 초기화
+        setRangeError(false);
+
+        // 범위 업데이트
         setSelectedRange(range);
         onDateRangeChange?.(range);
     };
@@ -151,6 +199,20 @@ export const SCDatePicker = ({
         if (mode === 'single') {
             handleSelectDate(newDate);
         } else {
+            // 최대 날짜 범위 검사
+            if (maxDateRange && days > maxDateRange) {
+                // 최대 범위 초과 시 에러 상태 설정
+                setRangeError(true);
+
+                // 에러 메시지 생성
+                const errorMessage = currentTexts.maxRangeError.replace('{0}', maxDateRange.toString());
+
+                // 콜백 호출 (에러 메시지 포함)
+                onMaxRangeExceeded?.(days, maxDateRange, errorMessage);
+
+                return;
+            }
+
             handleSelectRange({
                 from: new Date(),
                 to: newDate,
@@ -170,12 +232,12 @@ export const SCDatePicker = ({
             if (selectedRange.to) {
                 dateDisplayText = (
                     <>
-                        {format(selectedRange.from, 'LLL dd, y', { locale: locales[locale] })} -{' '}
-                        {format(selectedRange.to, 'LLL dd, y', { locale: locales[locale] })}
+                        {format(selectedRange.from, currentRangeDateFormat, { locale: locales[locale] })} -{' '}
+                        {format(selectedRange.to, currentRangeDateFormat, { locale: locales[locale] })}
                     </>
                 );
             } else {
-                dateDisplayText = format(selectedRange.from, 'LLL dd, y', { locale: locales[locale] });
+                dateDisplayText = format(selectedRange.from, currentRangeDateFormat, { locale: locales[locale] });
             }
         } else {
             dateDisplayText = <span>{currentTexts.placeholder}</span>;
@@ -190,9 +252,9 @@ export const SCDatePicker = ({
                     <Button
                         variant="outline"
                         className={cn(
-                            'w-[240px]',
                             'justify-start text-left font-normal',
                             !selectedDate && 'text-muted-foreground',
+                            !className?.includes('w-') && 'w-[240px]',
                             className,
                         )}
                         disabled={disabled}
@@ -242,9 +304,9 @@ export const SCDatePicker = ({
                     <Button
                         variant="outline"
                         className={cn(
-                            'w-[240px]',
                             'justify-start text-left font-normal',
                             !selectedDate && 'text-muted-foreground',
+                            !className?.includes('w-') && 'w-[240px]',
                             className,
                         )}
                         disabled={disabled}
@@ -282,9 +344,10 @@ export const SCDatePicker = ({
                         id="date"
                         variant="outline"
                         className={cn(
-                            'w-[300px]',
                             'justify-start text-left font-normal',
                             !selectedRange?.from && 'text-muted-foreground',
+                            rangeError && 'border-destructive text-destructive',
+                            !className?.includes('w-') && 'w-[300px]',
                             className,
                         )}
                         disabled={disabled}
@@ -294,6 +357,11 @@ export const SCDatePicker = ({
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
+                    {maxDateRange && (
+                        <div className="border-b p-3 text-sm text-muted-foreground">
+                            {currentTexts.maxRangeError.replace('{0}', maxDateRange.toString())}
+                        </div>
+                    )}
                     <Calendar
                         initialFocus
                         mode="range"

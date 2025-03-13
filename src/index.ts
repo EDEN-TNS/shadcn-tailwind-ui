@@ -22,5 +22,6 @@ export { SCThemeToggle } from '@/components/custom/theme/SCThemeToggle';
 export { SCThemeProvider } from '@/components/custom/theme/SCThemeContext';
 export { SCCard } from '@/components/custom/card/SCCard';
 export { SCBreadcrumb } from '@/components/custom/breadcrumb/SCBreadcrumb';
-export { SCDatePicker } from '@/components/custom/datePicker/SCDatePicker';
+export { SCDatePicker } from '@/components/custom/datePicker';
+export type { DateRange, SCDatePickerProps } from '@/components/custom/datePicker';
 export { SCTooltip } from '@/components/custom/tooltip/SCTooltip';
