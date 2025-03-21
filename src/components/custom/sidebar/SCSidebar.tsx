@@ -53,6 +53,8 @@ interface SCSidebarProps {
         logo: React.ReactNode;
         subText?: string;
         logoBgColor?: string;
+        logoBgColorDark?: string;
+        onClick?: () => void;
     };
     user?: {
         name: string;
@@ -212,11 +214,15 @@ export const SCSidebar = React.memo(
                 <SidebarHeader>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <SidebarMenuButton size="lg">
+                            <SidebarMenuButton size="lg" onClick={organization?.onClick}>
                                 <div
                                     className={cn(
                                         'flex size-8 shrink-0 items-center justify-center rounded-lg text-sidebar-primary-foreground',
+                                        organization?.logoBgColor && organization.logoBgColorDark
+                                            ? 'dark:bg-transparent'
+                                            : '',
                                         organization?.logoBgColor ? organization.logoBgColor : 'bg-sidebar-primary',
+                                        organization?.logoBgColorDark ? `dark:${organization.logoBgColorDark}` : '',
                                     )}
                                 >
                                     <div className="flex size-4 items-center justify-center">{organization?.logo}</div>
