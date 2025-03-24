@@ -21,6 +21,7 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
     SidebarRail,
+    useSidebar,
 } from '@/components/ui/sidebar';
 
 import { ChevronRight } from 'lucide-react';
@@ -28,6 +29,7 @@ import React from 'react';
 import { SCAvatar } from '@/components/custom/avatar/SCAvatar';
 import { SCScrollArea } from '@/components/custom/scrollArea/SCScrollArea';
 import { cn } from '@/lib/utils';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 const SC_SIDEBAR_SIZES = {
     default: 'w-64',
@@ -69,9 +71,6 @@ interface SCSidebarProps {
     size?: keyof typeof SC_SIDEBAR_SIZES;
     sections?: string[];
     collapsible?: boolean;
-    hideToggle?: boolean;
-    triggerIcon?: React.ReactNode;
-    triggerClassName?: string;
     renderLink?: (href: string, children: React.ReactNode, className?: string) => React.ReactNode;
     onLogout?: () => void;
     onProfileClick?: () => void;
@@ -106,6 +105,16 @@ export const SCSidebar = React.memo(
         useDropdownMenu = false,
         onUserClick,
     }: SCSidebarProps) => {
+        const { isSmallScreen } = useMediaQuery();
+        const { setOpen } = useSidebar();
+
+        // 태블릿이나 모바일인 경우 사이드바를 자동으로 접기
+        React.useEffect(() => {
+            if (isSmallScreen) {
+                setOpen(false);
+            }
+        }, [isSmallScreen, setOpen]);
+
         const isActive = React.useCallback(
             (href?: string, items?: { href: string }[]) => {
                 if (items) {

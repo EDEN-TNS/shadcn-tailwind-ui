@@ -29,13 +29,12 @@ const meta: Meta<typeof SCSidebar> = {
 - 사용자 프로필 표시
 - 조직 정보 표시
 - 반응형 디자인 지원
-- 독립적인 토글 트리거 컴포넌트
 - 커스텀 링크 렌더링 지원 (React Router, Next.js 등)
 
 ## 컴포넌트 구조
 - \`SCSidebarProvider\`: 사이드바의 상태를 관리하는 컨텍스트 제공자
 - \`SCSidebar\`: 메인 사이드바 컴포넌트
-- \`SCSidebarTrigger\`: 사이드바 토글 버튼 컴포넌트
+- \`SCSidebarTrigger\`: 독립적인 사이드바 토글 버튼 컴포넌트 (SCSidebar 외부에서 사용)
 
 ## 사용법
 
@@ -118,9 +117,144 @@ function MyLayout() {
 3. **기본 프로필**
    - 아무 핸들러도 제공하지 않으면 기본 상태로 표시됩니다.
 
+# 트리거 버튼 사용하기
+
+트리거 버튼은 \`SCSidebarTrigger\` 컴포넌트를 통해 제공됩니다. 이 컴포넌트는 SCSidebar와 별도로 사용되어 레이아웃의 어디에서든 사이드바를 토글할 수 있습니다.
+
+// 트리거 버튼 커스터마이징
+<SCSidebarTrigger
+  triggerIcon={<Menu className="h-4 w-4" />}
+  triggerClassName="absolute right-4 top-4 bg-background border rounded-full p-1 shadow-sm"
+/>
+
 자세한 예제는 아래 스토리들을 참고하세요.
+
 \`\`\`
 `,
+            },
+        },
+    },
+    argTypes: {
+        organization: {
+            description: '사이드바에 표시할 조직 정보 객체',
+            control: 'object',
+            table: {
+                category: '데이터',
+                type: {
+                    summary: 'object',
+                    detail: `{
+    name: string;
+    logo: React.ReactNode;
+    subText?: string;
+    logoBgColor?: string;
+    logoBgColorDark?: string;
+    onClick?: () => void;
+}`,
+                },
+            },
+        },
+        user: {
+            description: '사이드바 하단에 표시할 사용자 정보 객체',
+            control: 'object',
+            table: {
+                category: '데이터',
+                type: {
+                    summary: 'object',
+                    detail: `{
+    name: string;
+    email: string;
+    avatar?: string;
+    avatarBgColor?: string;
+    avatarClassName?: string;
+}`,
+                },
+            },
+        },
+        menuItems: {
+            description: '사이드바에 표시할 메뉴 항목 배열',
+            control: 'object',
+            table: {
+                category: '데이터',
+                type: {
+                    summary: 'MenuItem[]',
+                },
+            },
+        },
+        currentPath: {
+            description: '현재 활성화된 경로',
+            control: 'text',
+            table: {
+                category: '상태',
+                defaultValue: { summary: '/' },
+            },
+        },
+        size: {
+            description: '사이드바의 크기',
+            control: 'select',
+            options: ['default', 'sm', 'lg'],
+            table: {
+                category: '스타일',
+                defaultValue: { summary: 'default' },
+            },
+        },
+        sections: {
+            description: '메뉴 아이템을 그룹화할 섹션 이름 배열',
+            control: { type: 'object' },
+            table: {
+                category: '구조',
+            },
+        },
+        collapsible: {
+            description: '사이드바 접기/펼치기 가능 여부',
+            control: 'boolean',
+            table: {
+                category: '동작',
+                defaultValue: { summary: 'true' },
+            },
+        },
+        renderLink: {
+            description: '메뉴 항목의 링크를 렌더링하는 커스텀 함수',
+            table: {
+                category: '렌더링',
+                type: {
+                    summary: '(href: string, children: React.ReactNode) => React.ReactNode',
+                },
+            },
+        },
+        onLogout: {
+            description: '로그아웃 메뉴 클릭 시 호출될 함수',
+            table: {
+                category: '이벤트',
+                type: { summary: '() => void' },
+            },
+        },
+        onProfileClick: {
+            description: '프로필 메뉴 클릭 시 호출될 함수',
+            table: {
+                category: '이벤트',
+                type: { summary: '() => void' },
+            },
+        },
+        onSettingsClick: {
+            description: '설정 메뉴 클릭 시 호출될 함수',
+            table: {
+                category: '이벤트',
+                type: { summary: '() => void' },
+            },
+        },
+        useDropdownMenu: {
+            description: '사용자 프로필에 드롭다운 메뉴 사용 여부',
+            control: 'boolean',
+            table: {
+                category: 'UI',
+                defaultValue: { summary: 'false' },
+            },
+        },
+        onUserClick: {
+            description: '사용자 프로필 클릭 시 호출될 함수',
+            table: {
+                category: '이벤트',
+                type: { summary: '() => void' },
             },
         },
     },
