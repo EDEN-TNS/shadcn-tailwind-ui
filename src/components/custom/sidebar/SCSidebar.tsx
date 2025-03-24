@@ -71,12 +71,13 @@ interface SCSidebarProps {
     size?: keyof typeof SC_SIDEBAR_SIZES;
     sections?: string[];
     collapsible?: boolean;
+    useDropdownMenu?: boolean;
     renderLink?: (href: string, children: React.ReactNode, className?: string) => React.ReactNode;
     onLogout?: () => void;
     onProfileClick?: () => void;
     onSettingsClick?: () => void;
-    useDropdownMenu?: boolean;
     onUserClick?: () => void;
+    onToggle?: (isOpen: boolean) => void;
 }
 
 // 내부 헬퍼 컴포넌트 추가
@@ -98,15 +99,23 @@ export const SCSidebar = React.memo(
         size = 'default',
         sections,
         collapsible = true,
+        useDropdownMenu = false,
         renderLink,
         onLogout,
         onProfileClick,
         onSettingsClick,
-        useDropdownMenu = false,
         onUserClick,
+        onToggle,
     }: SCSidebarProps) => {
         const { isSmallScreen } = useMediaQuery();
-        const { setOpen } = useSidebar();
+        const { open, setOpen } = useSidebar();
+
+        // 사이드바 상태가 변경될 때마다 콜백 함수 호출
+        React.useEffect(() => {
+            if (onToggle) {
+                onToggle(open);
+            }
+        }, [open, onToggle]);
 
         // 태블릿이나 모바일인 경우 사이드바를 자동으로 접기
         React.useEffect(() => {
