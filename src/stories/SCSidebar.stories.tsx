@@ -3,9 +3,11 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { Link } from 'react-router-dom';
 import { MemoryRouter } from 'react-router-dom';
+import React from 'react';
 import { SCSidebar } from '@/components/custom/sidebar/SCSidebar';
 import { SCSidebarProvider } from '@/components/custom/sidebar/SCSidebarProvider';
 import { SCSidebarTrigger } from '@/components/custom/sidebar/SCSidebarTrigger';
+import { cn } from '@/lib/utils';
 
 const meta: Meta<typeof SCSidebar> = {
     title: 'Components/SCSidebar',
@@ -146,8 +148,8 @@ function MyLayout() {
     name: string;
     logo: React.ReactNode;
     subText?: string;
-    logoBgColor?: string;
-    logoBgColorDark?: string;
+    logoBgColor?: string; // 라이트 모드용 배경색 (RGB 값, 예: #0000FF)
+    logoBgColorDark?: string; // 다크 모드용 배경색 (RGB 값, 예: #FF0000)
     onClick?: () => void;
 }`,
                 },
@@ -255,6 +257,13 @@ function MyLayout() {
             table: {
                 category: '이벤트',
                 type: { summary: '() => void' },
+            },
+        },
+        onToggle: {
+            description: '사이드바 상태가 변경될 때 호출될 함수',
+            table: {
+                category: '이벤트',
+                type: { summary: '(isOpen: boolean) => void' },
             },
         },
     },
@@ -455,12 +464,19 @@ export const CustomLogoBackground: Story = {
             name: '샘플 조직',
             logo: '🏢',
             subText: '엔터프라이즈 버전',
-            logoBgColor: 'bg-blue-500',
+            logoBgColor: '#0000FF',
         },
         user: {
             name: '홍길동',
             email: 'hong@example.com',
             avatar: 'https://github.com/shadcn.png',
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '로고 배경색을 RGB 값(#0000FF)으로 커스터마이징한 예제입니다. 라이트 모드에서만 적용됩니다.',
+            },
         },
     },
 };
@@ -505,12 +521,20 @@ export const GradientLogoBackground: Story = {
             name: '샘플 조직',
             logo: '🏢',
             subText: '엔터프라이즈 버전',
-            logoBgColor: 'bg-gradient-to-r from-purple-500 to-pink-500',
+            logoBgColor:
+                'linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%)',
         },
         user: {
             name: '홍길동',
             email: 'hong@example.com',
             avatar: 'https://github.com/shadcn.png',
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '로고 배경색을 CSS 그라데이션으로 커스터마이징한 예제입니다.',
+            },
         },
     },
 };
@@ -924,6 +948,221 @@ export const WithDefaultUserProfile: Story = {
 />
 \`\`\`
 `,
+            },
+        },
+    },
+};
+
+// 다크 모드 배경색 테스트를 위한 스토리 추가
+export const WithDarkModeLogoBackground: Story = {
+    render: args => {
+        const [isDark, setIsDark] = React.useState(false);
+
+        React.useEffect(() => {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                document.body.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.body.classList.remove('dark');
+            }
+        }, [isDark]);
+
+        return (
+            <div className={cn('flex w-full flex-1', isDark && 'dark')}>
+                <SCSidebar {...args} />
+                <main className="relative flex-1">
+                    <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+                    <div className="p-4">
+                        <button
+                            className="rounded bg-primary px-4 py-2 text-primary-foreground"
+                            onClick={() => setIsDark(!isDark)}
+                        >
+                            {isDark ? '라이트 모드로 변경' : '다크 모드로 변경'}
+                        </button>
+                        <p className="mt-4">현재 모드: {isDark ? '다크 모드' : '라이트 모드'}</p>
+                        <p className="mt-2">
+                            <strong>참고:</strong> 라이트 모드에서는 로고 배경색이 <code>logoBgColor</code>로 설정된
+                            값('#0000FF')으로, 다크 모드에서는 <code>logoBgColorDark</code>로 설정된 값('#FF0000')으로
+                            변경됩니다.
+                        </p>
+                    </div>
+                </main>
+            </div>
+        );
+    },
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+            logoBgColor: '#0000FF',
+            logoBgColorDark: '#FF0000',
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+            avatar: 'https://github.com/shadcn.png',
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '라이트 모드와 다크 모드에서 각각 다른 로고 배경색을 테스트하는 예제입니다. 라이트 모드에서는 #0000FF, 다크 모드에서는 #FF0000이 적용됩니다.',
+            },
+        },
+    },
+};
+
+// 접힌 상태에서의 메뉴 클릭 동작 테스트를 위한 스토리 추가
+export const CollapsedMenuClickTest: Story = {
+    render: args => {
+        const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+        const [currentPathState, setCurrentPathState] = React.useState('/');
+
+        return (
+            <div className="flex w-full flex-1">
+                <SCSidebar
+                    {...args}
+                    currentPath={currentPathState}
+                    onToggle={isOpen => setIsSidebarOpen(isOpen)}
+                    renderLink={(href, children) => (
+                        <a
+                            href="#"
+                            onClick={e => {
+                                e.preventDefault();
+                                setCurrentPathState(href);
+                                console.log(`네비게이션: ${href}`);
+                            }}
+                        >
+                            {children}
+                        </a>
+                    )}
+                />
+                <main className="relative flex-1 p-4">
+                    <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="mb-4" />
+                    <div className="mb-4">
+                        <div>사이드바 상태: {isSidebarOpen ? '열림' : '닫힘'}</div>
+                        <div>현재 경로: {currentPathState}</div>
+                    </div>
+                    <div>
+                        <p>
+                            이 예제는 사이드바가 접힌 상태에서 메뉴 클릭 시 페이지 이동을 테스트합니다.
+                            <br />
+                            1. 사이드바를 접습니다.
+                            <br />
+                            2. 접힌 상태에서 메뉴 아이콘을 클릭합니다.
+                            <br />
+                            3. 경로가 변경되고 상단의 '현재 경로' 정보가 업데이트되는지 확인합니다.
+                        </p>
+                    </div>
+                </main>
+            </div>
+        );
+    },
+    args: {
+        menuItems: defaultMenuItems,
+        sections: ['Platform', 'Projects'],
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+        },
+        user: {
+            name: '홍길동',
+            email: 'hong@example.com',
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '사이드바가 접힌 상태에서 메뉴 클릭 시 페이지 이동을 테스트하는 예제입니다.',
+            },
+        },
+    },
+};
+
+// 다크 모드에서 링크 클릭 확인을 위한 스토리 추가
+export const DarkModeClickableTest: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+                <div className="p-4">
+                    <button
+                        className="rounded bg-primary px-4 py-2 text-primary-foreground"
+                        onClick={() => {
+                            document.documentElement.classList.toggle('dark');
+                        }}
+                    >
+                        다크 모드 토글
+                    </button>
+                    <p className="mt-4">
+                        이 스토리에서는 다크 모드에서 링크 클릭이 잘 동작하는지 테스트할 수 있습니다.
+                        <br />
+                        사이드바가 접힌 상태에서도 메뉴를 클릭하면 동작하는지 확인하세요.
+                    </p>
+                </div>
+            </main>
+        </div>
+    ),
+    args: {
+        ...defaultArgs,
+        renderLink: (href, children) => (
+            <a
+                href="#"
+                onClick={e => {
+                    e.preventDefault();
+                    alert(`클릭된 경로: ${href}`);
+                }}
+            >
+                {children}
+            </a>
+        ),
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '다크 모드에서 링크 클릭이 정상적으로 동작하는지 테스트하는 예제입니다.',
+            },
+        },
+    },
+};
+
+// 조직 로고 클릭 테스트를 위한 스토리 추가
+export const OrganizationClickableTest: Story = {
+    render: args => (
+        <div className="flex w-full flex-1">
+            <SCSidebar {...args} />
+            <main className="relative flex-1">
+                <SCSidebarTrigger triggerIcon={<Menu className="h-4 w-4" />} triggerClassName="ml-2 mt-2" />
+                <div className="p-4">
+                    <p>
+                        이 스토리에서는 조직 로고를 클릭했을 때의 동작을 테스트할 수 있습니다.
+                        <br />
+                        사이드바 상단의 조직 로고를 클릭해보세요.
+                    </p>
+                </div>
+            </main>
+        </div>
+    ),
+    args: {
+        ...defaultArgs,
+        organization: {
+            name: '샘플 조직',
+            logo: '🏢',
+            subText: '엔터프라이즈 버전',
+            onClick: () => {
+                alert('조직 로고가 클릭되었습니다!');
+            },
+        },
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: '조직 로고 클릭 시 이벤트가 발생하는지 테스트하는 예제입니다.',
             },
         },
     },

@@ -54,8 +54,8 @@ interface SCSidebarProps {
         name: string;
         logo: React.ReactNode;
         subText?: string;
-        logoBgColor?: string;
-        logoBgColorDark?: string;
+        logoBgColor?: string; // 라이트 모드용 배경색 (RGB 값, 예: #0000FF)
+        logoBgColorDark?: string; // 다크 모드용 배경색 (RGB 값, 예: #FF0000)
         onClick?: () => void;
     };
     user?: {
@@ -109,6 +109,27 @@ export const SCSidebar = React.memo(
     }: SCSidebarProps) => {
         const { isSmallScreen } = useMediaQuery();
         const { open, setOpen } = useSidebar();
+        const [isDarkMode, setIsDarkMode] = React.useState(false);
+
+        // 다크 모드 감지
+        React.useEffect(() => {
+            const isDark = document.documentElement.classList.contains('dark');
+            setIsDarkMode(isDark);
+
+            // 다크 모드 변경 감지를 위한 MutationObserver
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    if (mutation.attributeName === 'class') {
+                        const isDarkNow = document.documentElement.classList.contains('dark');
+                        setIsDarkMode(isDarkNow);
+                    }
+                });
+            });
+
+            observer.observe(document.documentElement, { attributes: true });
+
+            return () => observer.disconnect();
+        }, []);
 
         // 사이드바 상태가 변경될 때마다 콜백 함수 호출
         React.useEffect(() => {
@@ -137,6 +158,14 @@ export const SCSidebar = React.memo(
         const renderMenuItem = React.useCallback(
             (item: MenuItem) => {
                 const active = isActive(item.href, item.items);
+
+                // 접힌 상태에서 링크 이동 처리 함수
+                const handleCollapsedClick = (href?: string) => {
+                    if (!open && href) {
+                        window.location.href = href;
+                    }
+                };
+
                 return (
                     <Collapsible key={item.label} asChild defaultOpen={active} className="group/collapsible">
                         <SidebarMenuItem className={!item.items && currentPath === item.href ? 'bg-accent' : ''}>
@@ -147,6 +176,13 @@ export const SCSidebar = React.memo(
                                             tooltip={item.label}
                                             className={active ? 'bg-accent' : ''}
                                             aria-expanded={active}
+                                            onClick={() => {
+                                                // 접힌 상태에서 첫 번째 하위 항목으로 이동
+                                                if (!open && item.items && item.items.length > 0) {
+                                                    const firstSubItem = item.items[0];
+                                                    handleCollapsedClick(firstSubItem.href);
+                                                }
+                                            }}
                                         >
                                             {React.createElement(item.icon, {
                                                 className: 'h-4 w-4',
@@ -194,11 +230,23 @@ export const SCSidebar = React.memo(
                                 <SidebarMenuButton
                                     tooltip={item.label}
                                     aria-current={currentPath === item.href ? 'page' : undefined}
+                                    onClick={() => handleCollapsedClick(item.href)}
                                 >
                                     {React.createElement(item.icon, {
                                         className: 'h-4 w-4',
                                     })}
-                                    {renderLink ? (
+                                    {renderLink && !open ? (
+                                        // 접힌 상태일 때는 onClick 이벤트가 발생하도록 처리
+                                        <div
+                                            className="flex w-full items-center text-foreground no-underline"
+                                            onClick={e => {
+                                                e.stopPropagation(); // 이벤트 버블링 방지
+                                                handleCollapsedClick(item.href);
+                                            }}
+                                        >
+                                            <span>{item.label}</span>
+                                        </div>
+                                    ) : renderLink ? (
                                         // 커스텀 Link 컴포넌트를 렌더링하되, 원본 스타일 속성을 전달
                                         React.cloneElement(
                                             renderLink(
@@ -221,7 +269,7 @@ export const SCSidebar = React.memo(
                     </Collapsible>
                 );
             },
-            [isActive, currentPath, renderLink],
+            [isActive, currentPath, renderLink, open],
         );
 
         return (
@@ -236,12 +284,18 @@ export const SCSidebar = React.memo(
                                 <div
                                     className={cn(
                                         'flex size-8 shrink-0 items-center justify-center rounded-lg text-sidebar-primary-foreground',
-                                        organization?.logoBgColor && organization.logoBgColorDark
-                                            ? 'dark:bg-transparent'
-                                            : '',
-                                        organization?.logoBgColor ? organization.logoBgColor : 'bg-sidebar-primary',
-                                        organization?.logoBgColorDark ? `dark:${organization.logoBgColorDark}` : '',
+                                        !organization?.logoBgColor && 'bg-sidebar-primary',
+                                        'transition-colors duration-200',
                                     )}
+                                    style={{
+                                        backgroundColor:
+                                            !isDarkMode && organization?.logoBgColor
+                                                ? organization.logoBgColor
+                                                : undefined,
+                                        ...(isDarkMode && organization?.logoBgColorDark
+                                            ? { backgroundColor: organization.logoBgColorDark }
+                                            : {}),
+                                    }}
                                 >
                                     <div className="flex size-4 items-center justify-center">{organization?.logo}</div>
                                 </div>
